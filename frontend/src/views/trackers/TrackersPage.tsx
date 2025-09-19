@@ -1,6 +1,6 @@
 import ContentLayout from "@/layouts/ContentLayout";
 
-export default function CrawlersPage() {
+export default function TrackersPage() {
   return (
     <ContentLayout title="Rastreadores">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">

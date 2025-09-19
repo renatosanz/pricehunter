@@ -70,7 +70,7 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link to="/notifications">
+              <Link to="/home/notifications">
                 <DropdownMenuItem>Notificaciones</DropdownMenuItem>
               </Link>
             </DropdownMenuGroup>

@@ -1,16 +1,17 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import LoginPage from "./views/LoginPage";
-import HeroPage from "./views/HeroPage";
-import HomePage from "./views/HomePage";
+import LoginPage from "./views/login/LoginPage";
+import HeroPage from "./views/hero/HeroPage";
+import HomePage from "./views/home/HomePage";
 import { ThemeProvider } from "./components/theme-provider";
-import RegisterPage from "./views/RegisterPage";
+import RegisterPage from "./views/login/RegisterPage";
 import { Toaster } from "./components/ui/sonner";
 import NotFound from "./views/NotFound";
 import SessionLayout from "./layouts/SessionLayout";
-import CrawlersPage from "./views/CrawlersPage";
-import HistoryPage from "./views/HistoryPage";
+import TrackersPage from "./views/trackers/TrackersPage";
+import HistoryPage from "./views/history/HistoryPage";
 import Dashboard from "./components/Dashboard";
-import NotificactionsPage from "./views/NotificactionsPage";
+import NotificactionsPage from "./views/notifications/NotificactionsPage";
+import NewTrackerPage from "./views/trackers/NewTrackerPage";
 
 function App() {
   return (
@@ -24,8 +25,9 @@ function App() {
               <Route path="/home" element={<HomePage />}>
                 <Route path="" element={<Dashboard />} />
                 <Route path="history" element={<HistoryPage />} />
-                <Route path="crawlers" element={<CrawlersPage />} />
+                <Route path="Trackers" element={<TrackersPage />} />
                 <Route path="notifications" element={<NotificactionsPage />} />
+                <Route path="new-tracker" element={<NewTrackerPage />} />
               </Route>
             </Route>
             <Route path="/login" element={<LoginPage />} />

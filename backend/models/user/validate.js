@@ -1,5 +1,11 @@
 import Joi from "joi";
 
+/**
+ * Middleware de validacion para login de usuarios
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
 export const validateLogIn = async (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().min(2).max(100).email().required(),
@@ -12,6 +18,7 @@ export const validateLogIn = async (req, res, next) => {
   }
   next();
 };
+
 /**
  * Middleware de validacion para el registro de usuarios
  * @param {import('express').Request & { user?: any }} req

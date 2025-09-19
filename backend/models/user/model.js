@@ -1,5 +1,6 @@
 import { DataTypes } from "@sequelize/core";
 import { db } from "../../db.js";
+import { Tracker } from "../tracker/model.js";
 
 export const User = db.define(
   "User",
@@ -34,3 +35,6 @@ export const User = db.define(
     tableName: "user",
   }
 );
+
+User.hasMany(Tracker, { foreignKey: "user_id" });
+Tracker.belongsTo(User, { foreignKey: "user_id" });
