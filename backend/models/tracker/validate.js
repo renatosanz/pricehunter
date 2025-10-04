@@ -9,8 +9,8 @@ import Joi from "joi";
 export const validateNewTracker = async (req, res, next) => {
   const schema = Joi.object({
     name: Joi.string().min(5).max(64).required(),
-    link: Joi.string().min(5).max(100).email().required(),
-    traceInterval: Joi.string().min(2).max(100).email().required(),
+    link: Joi.string().min(5).uri().required(),
+    traceInterval: Joi.number().min(0).max(1440).required(),
   });
 
   const { error } = schema.validate(req.body);

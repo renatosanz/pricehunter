@@ -1,38 +1,55 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import LoginPage from "./views/login/LoginPage";
-import HeroPage from "./views/hero/HeroPage";
-import HomePage from "./views/home/HomePage";
 import { ThemeProvider } from "./components/theme-provider";
-import RegisterPage from "./views/login/RegisterPage";
 import { Toaster } from "./components/ui/sonner";
-import NotFound from "./views/NotFound";
-import SessionLayout from "./layouts/SessionLayout";
-import TrackersPage from "./views/trackers/TrackersPage";
-import HistoryPage from "./views/history/HistoryPage";
-import Dashboard from "./components/Dashboard";
-import NotificactionsPage from "./views/notifications/NotificactionsPage";
-import NewTrackerPage from "./views/trackers/NewTrackerPage";
+import { lazy, Suspense } from "react";
+import { FallbackPage } from "./views/fallback/Fallback";
+import DetailsTracker from "./views/trackers/detailsTracker/DetailsTracker";
+
+const LoginPage = lazy(() => import("./views/login/LoginPage"));
+const HeroPage = lazy(() => import("./views/hero/HeroPage"));
+const HomePage = lazy(() => import("./views/home/HomePage"));
+const RegisterPage = lazy(() => import("./views/login/RegisterPage"));
+const NotFound = lazy(() => import("./views/NotFound"));
+const SessionLayout = lazy(() => import("./layouts/SessionLayout"));
+const TrackersPage = lazy(
+  () => import("./views/trackers/allTrackers/TrackersPage")
+);
+const HistoryPage = lazy(() => import("./views/history/HistoryPage"));
+const Dashboard = lazy(() => import("./components/Dashboard"));
+const NotificactionsPage = lazy(
+  () => import("./views/notifications/NotificactionsPage")
+);
+const NewTrackerPage = lazy(
+  () => import("./views/trackers/newTracker/NewTrackerPage")
+);
 
 function App() {
   return (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <BrowserRouter>
-          <Routes>
-            <Route path="*" element={<NotFound />} />
-            <Route path="/" element={<HeroPage />} />
-            <Route path="/" element={<SessionLayout />}>
-              <Route path="/home" element={<HomePage />}>
-                <Route path="" element={<Dashboard />} />
-                <Route path="history" element={<HistoryPage />} />
-                <Route path="Trackers" element={<TrackersPage />} />
-                <Route path="notifications" element={<NotificactionsPage />} />
-                <Route path="new-tracker" element={<NewTrackerPage />} />
+          <Suspense fallback={<FallbackPage />}>
+            <Routes>
+              <Route path="*" element={<NotFound />} />
+              <Route path="/" element={<HeroPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+
+              <Route path="/" element={<SessionLayout />}>
+                <Route path="/home" element={<HomePage />}>
+                  <Route path="" element={<Dashboard />} />
+                  <Route path="history" element={<HistoryPage />} />
+                  <Route path="trackers" element={<TrackersPage />} />
+                  <Route path="trackers/:id" element={<DetailsTracker />} />
+                  <Route
+                    path="notifications"
+                    element={<NotificactionsPage />}
+                  />
+                  <Route path="new-tracker" element={<NewTrackerPage />} />
+                </Route>
               </Route>
-            </Route>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-          </Routes>
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </ThemeProvider>
       <Toaster />

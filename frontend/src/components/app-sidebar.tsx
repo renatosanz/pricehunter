@@ -17,8 +17,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
-import { NavSecondary } from "./nav-secondary";
-import { NavUser } from "./user-nav";
+import { NavSecondary } from "./secondary-sidebar";
+import { NavUser } from "./user-sidebar";
 import { useUserStore } from "@/stores/user-store";
 
 const data = {
@@ -29,7 +29,7 @@ const data = {
     },
     {
       title: "Rastreadores",
-      url: "/home/Trackers",
+      url: "/home/trackers",
     },
     {
       title: "Historial",

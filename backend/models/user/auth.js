@@ -19,26 +19,22 @@ export function isAuthenticated(req, res, next) {
     return res.status(403).send("Sesion no verificada: falta token.");
   }
 
-  jwt.verify(
-    access_token,
-    process.env.SEED_AUTENTICACION || "",
-    (err, decoded) => {
-      if (err) {
-        console.error("Token verification failed:", err);
-        return res
-          .clearCookie("access_token", {
-            sameSite: "none",
-            httpOnly: true,
-            secure: true,
-          })
-          .status(403)
-          .json({ success: false });
-      } else {
-        req.user = { id: decoded.user };
-        return next();
-      }
+  jwt.verify(access_token, process.env.SEED_AUTENTICACION, (err, decoded) => {
+    if (err) {
+      console.error("Token verification failed:", err);
+      return res
+        .clearCookie("access_token", {
+          sameSite: "none",
+          httpOnly: true,
+          secure: true,
+        })
+        .status(403)
+        .json({ success: false });
+    } else {
+      req.user = { id: decoded.user };
+      return next();
     }
-  );
+  });
 }
 
 /**
@@ -112,12 +108,12 @@ export const userLogOut = async (req, res) => {
               httpOnly: true,
               secure: true,
             })
-            .json({ success: true })
+            .json({ success: true, message: "Sesion Expirada" })
             .status(200);
         }
 
         const { user } = decoded;
-        const user_db = await User.findOne({
+        await User.findOne({
           where: { id: user },
         });
         return res

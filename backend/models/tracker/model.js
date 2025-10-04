@@ -1,9 +1,9 @@
 import { DataTypes } from "@sequelize/core";
 import { db } from "../../db.js";
-import { User } from "../user/model.js";
+
 
 export const Tracker = db.define(
-  "tracker",
+  "Tracker",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -33,6 +33,10 @@ export const Tracker = db.define(
         min: 5,
       },
     },
+    platform: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     image: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -41,9 +45,13 @@ export const Tracker = db.define(
         min: 5,
       },
     },
-    traceInterval: {
-      type: DataTypes.REAL,
+    traceInterval: { // en minutos
+      type: DataTypes.INTEGER,
       allowNull: false,
+      validate: {
+        min: 0,
+        max: 1440,
+      },
     },
     active: {
       type: DataTypes.BOOLEAN,
@@ -51,6 +59,6 @@ export const Tracker = db.define(
     },
   },
   {
-    tableName: "user",
+    tableName: "tracker",
   }
 );

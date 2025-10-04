@@ -1,4 +1,4 @@
-import { Tracker } from "./model";
+import { Tracker } from "./model.js";
 
 /**
  * Crear un nuevo tracker de precios
@@ -12,13 +12,13 @@ export const newTracker = async (req, res) => {
 
     const tracker = await Tracker.findOne({
       where: {
-        user_id: user,
+        user_id: user.id,
         name: name,
       },
     });
 
-    if (!tracker) {
-      return res.status(201).json({
+    if (tracker) {
+      return res.status(400).json({
         success: false,
         message: "Nombre no disponible",
       });
@@ -28,11 +28,14 @@ export const newTracker = async (req, res) => {
       name: name,
       link: link,
       traceInterval: traceInterval,
-      user_id: user,
+      user_id: user.id,
     });
     return res.status(201).json({
       success: true,
-      tracker: newTracker.name,
+      tracker: {
+        name: newTracker.name,
+        id: newTracker.id,
+      },
     });
   } catch (error) {
     console.error("Error: ", error.message);
@@ -51,7 +54,12 @@ export const newTracker = async (req, res) => {
 export const allTrackers = async (req, res) => {
   try {
     const user = req.user;
-    const trackers = Tracker.findAll({ where: { user_id: user }, limit: 10 });
+    const trackers = await Tracker.findAll({
+      where: { user_id: user.id },
+      attributes: ["name", "id", "link", "traceInterval", "active"],
+      limit: 10,
+    });
+
     return res.status(200).json({
       success: true,
       trackers,
@@ -60,7 +68,36 @@ export const allTrackers = async (req, res) => {
     console.error("Error: ", error.message);
     return res.status(500).json({
       success: false,
-      message: "Error al verificar disponibilidad de nombre",
+      message: "Error al obtener todos los rastreadores",
+    });
+  }
+};
+
+/**
+ * Obtener detalles del rastreador por medio de su id
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ */
+export const getTrackerDetails = async (req, res) => {
+  try {
+    const tracker = await Tracker.findByPk(req.params.id);
+
+    if (!tracker) {
+      return res.status(400).json({
+        success: false,
+        message: "Rastreador no encontrado.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      trackers: tracker,
+    });
+  } catch (error) {
+    console.error("Error: ", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener todos los rastreadores",
     });
   }
 };

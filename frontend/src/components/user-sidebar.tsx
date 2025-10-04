@@ -14,7 +14,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "./ui/sidebar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { logoutUser } from "@/services/user-service";
+import { toast } from "sonner";
+import { LogOutIcon } from "lucide-react";
+import { useUserStore } from "@/stores/user-store";
 
 export function NavUser({
   user,
@@ -25,7 +29,22 @@ export function NavUser({
     avatar: string;
   };
 }) {
+  const navigate = useNavigate();
+  const {name} = useUserStore((state) => state.user);
   const { isMobile } = useSidebar();
+  const handleLogout = () => {
+    logoutUser().then((res) => {
+      toast("Sesion Terminada", {
+        description: res.message ? res.message : `Hasta luego ${name}.`,
+        position: "bottom-center",
+        duration: 2000,
+        icon: <LogOutIcon />,
+        onAutoClose: () => {
+          navigate("/", { replace: true });
+        },
+      });
+    });
+  };
 
   return (
     <SidebarMenu>
@@ -75,7 +94,9 @@ export function NavUser({
               </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Cerrar Sesion</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
+              Cerrar Sesion
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

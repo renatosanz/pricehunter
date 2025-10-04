@@ -19,7 +19,7 @@ export default function SessionLayout() {
 
     if (isUserLogged()) {
       verifyUserSession().then((response) => {
-        if (!response) {
+        if (!response) {2
           exitApp();
         }
 

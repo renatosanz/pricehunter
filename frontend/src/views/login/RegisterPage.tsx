@@ -8,14 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  UserPlus,
-  ArrowLeft,
-  Eye,
-  EyeClosed,
-  Angry,
-  BadgeX,
-} from "lucide-react";
+import { UserPlus, ArrowLeft, Eye, EyeClosed } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import z from "zod";
 import { useForm } from "react-hook-form";
@@ -102,6 +95,7 @@ export default function RegisterPage() {
         ? toast("Bienvenido", {
             description: "Registro exitoso.",
             position: "bottom-center",
+            duration: 2000,
             onAutoClose: () => {
               navigate("/login");
             },
@@ -139,7 +133,8 @@ export default function RegisterPage() {
             </div>
             <CardTitle className="text-2xl">Crea una cuenta</CardTitle>
             <CardDescription>
-              Unete a PriceHunter y comienza a ahorrar dinero en tus productos favoritos.
+              Unete a PriceHunter y comienza a ahorrar dinero en tus productos
+              favoritos.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -221,6 +216,7 @@ export default function RegisterPage() {
                             type={pswdInputState.confirm}
                             autoComplete="password"
                             placeholder="Confirma la contraseña"
+                            onPaste={(e) => e.preventDefault()}
                             {...field}
                           />
                         </FormControl>
@@ -239,7 +235,7 @@ export default function RegisterPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit">Acceder</Button>
+                <Button type="submit">Registrar</Button>
               </form>
             </Form>
 

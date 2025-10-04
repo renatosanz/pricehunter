@@ -1,10 +1,12 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+
 import { db } from "./db.js";
 
 //import routes
 import userRoutes from "./models/user/routes.js";
+import trackerRoutes from "./models/tracker/routes.js";
 
 const PORT = 3000;
 
@@ -24,6 +26,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/user", userRoutes);
+app.use("/api/tracker", trackerRoutes);
 
 app.use(/(.*)/, (req, res) => {
   res.status(404).json({ error: "Ruta no encontrada" });

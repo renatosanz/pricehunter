@@ -116,10 +116,12 @@ export default function HeroPage() {
                 Únete a miles de compradores inteligentes que nunca pagan precio
                 completo. Comienza a rastrear tu primer producto hoy.
               </p>
-              <Button size="lg" className="h-12 px-8 text-base font-semibold">
-                <Search className="mr-2 h-5 w-5" />
-                Comenzar gratis
-              </Button>
+              <Link to="/login" className="m-auto">
+                <Button size="lg" className="h-12 px-8 text-base font-semibold">
+                  <Search className="mr-2 h-5 w-5" />
+                  Comenzar gratis
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>

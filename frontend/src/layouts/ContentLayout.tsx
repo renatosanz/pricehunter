@@ -8,10 +8,10 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function ContentLayout({
-  title,
+  title = "no title",
   children,
 }: {
-  title: string;
+  title: string | undefined;
   children: any;
 }) {
   return (

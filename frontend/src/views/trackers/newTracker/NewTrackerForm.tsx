@@ -16,9 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { createNewTracker } from "@/services/tracker-service";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import z from "zod";
 
 const schema = z.object({
@@ -30,24 +32,43 @@ const schema = z.object({
   link: z
     .url({ error: "URL no valido", abort: true })
     .nonempty({ error: "Ingresa el link del producto a rastrear porfavor" }),
-  trackInterval: z
+  traceInterval: z
     .number()
     .nonnegative({ error: "No se pueden asignar valores negativos" })
     .min(1, { error: "El intervalo debe ser al menos 1" }),
 });
 
 export default function NewTrackerForm() {
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
       link: "",
-      trackInterval: 2,
+      traceInterval: 2,
     },
   });
 
   const onSubmit = (values: z.infer<typeof schema>) => {
-    console.log(values);
+    createNewTracker(values).then((res) => {
+      if (!res?.success) {
+        toast("Error", {
+          description: res?.message,
+          position: "bottom-center",
+        });
+      }
+
+      toast("Bienvenido", {
+        description: "Registro exitoso.",
+        position: "bottom-center",
+        duration: 2000,
+        action: {
+          label: "Ver Detalles",
+          onClick: () => navigate(`/home/trackers/${res?.tracker.id}`),
+        },
+      });
+      navigate("/home");
+    });
   };
 
   return (
@@ -98,7 +119,7 @@ export default function NewTrackerForm() {
           />
           <FormField
             control={form.control}
-            name="trackInterval"
+            name="traceInterval"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Lapso de rastreo</FormLabel>

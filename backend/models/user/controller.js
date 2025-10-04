@@ -44,6 +44,12 @@ export const getUserData = async (req, res) => {
     const user = await User.findByPk(req.user.id, {
       attributes: ["name", "email"],
     });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Usuario no valido.",
+      });
+    }
     return res.status(200).json({
       success: true,
       user,

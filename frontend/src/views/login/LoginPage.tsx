@@ -66,19 +66,22 @@ export default function LoginPage() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     loginUser(values).then((res) => {
-      res.success
-        ? toast("Bienvenido", {
-            description: "Inicio de sesion exitoso.",
-            position: "bottom-center",
-            icon: <UserRoundCheck />,
-            onAutoClose: () => {
-              navigate("/home", { replace: true });
-            },
-          })
-        : toast("Error", {
-            description: res.message,
-            position: "bottom-center",
-          });
+      if (res.success) {
+        toast("Bienvenido", {
+          description: "Inicio de sesion exitoso.",
+          position: "bottom-center",
+          duration: 2000,
+          icon: <UserRoundCheck />,
+          onAutoClose: () => {
+            navigate("/home", { replace: true });
+          },
+        });
+      } else {
+        toast("Error", {
+          description: res.message,
+          position: "bottom-center",
+        });
+      }
     });
   };
 
@@ -183,7 +186,10 @@ export default function LoginPage() {
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" className="w-full">
+                    <Button
+                      type="submit"
+                      className="w-full"
+                    >
                       Submit
                     </Button>
                   </form>

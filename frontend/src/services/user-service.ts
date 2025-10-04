@@ -26,6 +26,27 @@ export async function loginUser(data: { email: string; password: string }) {
   }
 }
 
+export async function logoutUser(): Promise<{
+  success: boolean;
+  message?: string;
+}> {
+  try {
+    const response = await axios.get(`${environment.url_api}/user/logout`, {
+      withCredentials: true,
+    });
+
+    if (response.data.success) {
+      Cookies.remove("isLogged");
+    }
+
+    // logout efectivo o erroneo
+    return response.data;
+  } catch (error) {
+    console.error("Error al iniciar sesion.");
+    return { success: false };
+  }
+}
+
 export async function registerUser(data: {
   name: string;
   email: string;
@@ -60,6 +81,8 @@ export const verifyUserSession = async (): Promise<
 
     if (response.data.success) {
       Cookies.set("isLogged", "true");
+    } else {
+      Cookies.remove("isLogged");
     }
 
     return response.data;
