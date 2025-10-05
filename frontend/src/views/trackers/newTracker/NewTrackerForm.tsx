@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -9,6 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -37,6 +39,8 @@ const schema = z.object({
     .number()
     .nonnegative({ error: "No se pueden asignar valores negativos" })
     .min(1, { error: "El intervalo debe ser al menos 1" }),
+  sms_enabled: z.boolean(),
+  email_enabled: z.boolean(),
 });
 
 export default function NewTrackerForm() {
@@ -47,10 +51,13 @@ export default function NewTrackerForm() {
       name: "",
       link: "",
       traceInterval: 2,
+      email_enabled: true,
+      sms_enabled: true,
     },
   });
 
   const onSubmit = (values: z.infer<typeof schema>) => {
+    console.log(values);
     createNewTracker(values).then((res) => {
       if (!res?.success) {
         toast("Error", {
@@ -149,6 +156,51 @@ export default function NewTrackerForm() {
               </FormItem>
             )}
           />
+          <Label className="hover:bg-accent/50 flex flex-col items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
+            <FormLabel className="text-base text-xlscroll-m-20 font-extrabold tracking-tight text-balance">
+              Notificaciones
+            </FormLabel>
+            <FormField
+              control={form.control}
+              name="email_enabled"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-2">
+                  <FormControl>
+                    <Checkbox
+                      id="toggle-1"
+                      defaultChecked
+                      className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
+                      onCheckedChange={(checked) => field.onChange(checked)}
+                    />
+                  </FormControl>
+                  <FormLabel className="text-sm font-normal">
+                    Habilitar Notificaciones Email
+                  </FormLabel>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="sms_enabled"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-2">
+                  <FormControl>
+                    <Checkbox
+                      id="toggle-2"
+                      defaultChecked
+                      className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
+                      onCheckedChange={(checked) => field.onChange(checked)}
+                    />
+                  </FormControl>
+                  <FormLabel className="text-sm font-normal">
+                    Habilitar Notificaciones SMS
+                  </FormLabel>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </Label>
           <Button type="submit">
             A rastrear! <PlaneIcon className="size-5" />
           </Button>

@@ -8,7 +8,7 @@ import { Tracker } from "./model.js";
 export const newTracker = async (req, res) => {
   try {
     const user = req.user;
-    const { name, link, traceInterval } = req.body;
+    const { name, link, traceInterval, sms_enabled, email_enabled } = req.body;
 
     const tracker = await Tracker.findOne({
       where: {
@@ -29,6 +29,8 @@ export const newTracker = async (req, res) => {
       link: link,
       traceInterval: traceInterval,
       user_id: user.id,
+      sms_enabled: sms_enabled,
+      email_enabled: email_enabled,
     });
     return res.status(201).json({
       success: true,
