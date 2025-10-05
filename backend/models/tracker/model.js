@@ -57,6 +57,14 @@ export const Tracker = db.define(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    sms_enabled:{
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
+    email_enabled:{
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    }
   },
   {
     tableName: "tracker",

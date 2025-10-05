@@ -1,22 +1,35 @@
 import ContentLayout from "@/layouts/ContentLayout";
 import { getTrackerDetails } from "@/services/tracker-service";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { Tracker } from "../allTrackers/columns";
 import { PriceTrackingChart } from "./PriceTrackingChart";
 import { Spinner } from "@/views/fallback/Fallback";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
+import { AsteriskIcon } from "lucide-react";
 
 export default function DetailsTracker() {
   const { id } = useParams();
   const [details, setDetails] = useState<Tracker>();
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
       getTrackerDetails(parseInt(id)).then((res) => {
-        setDetails(res);
+        if (!res?.success) {
+          navigate("/home", { replace: true });
+          toast("Ha ocurrido un error", {
+            description: "Rastreador no encontrado",
+            position: "bottom-center",
+            duration: 2000,
+            icon: <AsteriskIcon />,
+          });
+          return;
+        }
         setIsLoading(false);
+        setDetails(res?.tracker);
       });
     }
     return () => {};

@@ -51,16 +51,12 @@ export const getAllTrackers = async (): Promise<Tracker[] | undefined> => {
 
 export const getTrackerDetails = async (
   id: number
-): Promise<Tracker | undefined> => {
+): Promise<{ tracker: Tracker; success: boolean } | undefined> => {
   try {
     const response = await axios.get(`${environment.url_api}/tracker/${id}`, {
       withCredentials: true,
     });
-
-    if (!response.data.success) {
-      return undefined;
-    }
-    return response.data.trackers;
+    return response.data;
   } catch (error) {
     console.error("Error al obtener todos los rastreadores.");
     return undefined;

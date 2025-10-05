@@ -80,7 +80,9 @@ export const allTrackers = async (req, res) => {
  */
 export const getTrackerDetails = async (req, res) => {
   try {
-    const tracker = await Tracker.findByPk(req.params.id);
+    const tracker = await Tracker.findByPk(req.params.id, {
+      where: { user_id: req.user.id },
+    });
 
     if (!tracker) {
       return res.status(400).json({
@@ -91,7 +93,7 @@ export const getTrackerDetails = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      trackers: tracker,
+      tracker: tracker,
     });
   } catch (error) {
     console.error("Error: ", error.message);
