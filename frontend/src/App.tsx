@@ -4,6 +4,7 @@ import { Toaster } from "./components/ui/sonner";
 import { lazy, Suspense } from "react";
 import { FallbackPage } from "./views/fallback/Fallback";
 import DetailsTracker from "./views/trackers/detailsTracker/DetailsTracker";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 const LoginPage = lazy(() => import("./views/login/LoginPage"));
 const HeroPage = lazy(() => import("./views/hero/HeroPage"));
@@ -27,32 +28,34 @@ function App() {
   return (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <BrowserRouter>
-          <Suspense fallback={<FallbackPage />}>
-            <Routes>
-              <Route path="*" element={<NotFound />} />
-              <Route path="/" element={<HeroPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+        <TooltipProvider>
+          <BrowserRouter>
+            <Suspense fallback={<FallbackPage />}>
+              <Routes>
+                <Route path="*" element={<NotFound />} />
+                <Route path="/" element={<HeroPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
 
-              <Route path="/" element={<SessionLayout />}>
-                <Route path="/home" element={<HomePage />}>
-                  <Route path="" element={<Dashboard />} />
-                  <Route path="history" element={<HistoryPage />} />
-                  <Route path="trackers" element={<TrackersPage />} />
-                  <Route path="trackers/:id" element={<DetailsTracker />} />
-                  <Route
-                    path="notifications"
-                    element={<NotificactionsPage />}
-                  />
-                  <Route path="new-tracker" element={<NewTrackerPage />} />
+                <Route path="/" element={<SessionLayout />}>
+                  <Route path="/home" element={<HomePage />}>
+                    <Route path="" element={<Dashboard />} />
+                    <Route path="history" element={<HistoryPage />} />
+                    <Route path="trackers" element={<TrackersPage />} />
+                    <Route path="trackers/:id" element={<DetailsTracker />} />
+                    <Route
+                      path="notifications"
+                      element={<NotificactionsPage />}
+                    />
+                    <Route path="new-tracker" element={<NewTrackerPage />} />
+                  </Route>
                 </Route>
-              </Route>
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+          <Toaster />
+        </TooltipProvider>
       </ThemeProvider>
-      <Toaster />
     </>
   );
 }

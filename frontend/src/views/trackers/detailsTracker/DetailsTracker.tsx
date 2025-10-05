@@ -4,15 +4,19 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { Tracker } from "../allTrackers/columns";
 import { PriceTrackingChart } from "./PriceTrackingChart";
+import { Spinner } from "@/views/fallback/Fallback";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DetailsTracker() {
   const { id } = useParams();
   const [details, setDetails] = useState<Tracker>();
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     if (id) {
       getTrackerDetails(parseInt(id)).then((res) => {
-        console.log("rastreador:", res);
         setDetails(res);
+        setIsLoading(false);
       });
     }
     return () => {};
@@ -20,13 +24,25 @@ export default function DetailsTracker() {
 
   return (
     <ContentLayout title={"Detalles del Rastreador"}>
-      <h2 className="text-xlscroll-m-20 text-3xl font-extrabold tracking-tight text-balance">
-        {details?.name}
-      </h2>
+      {isLoading ? (
+        <Skeleton className="h-[36px] rounded-xl" />
+      ) : (
+        <h2 className="text-xlscroll-m-20 text-3xl font-extrabold tracking-tight text-balance">
+          {details?.name}
+        </h2>
+      )}
       <div className="max-h-full overflow-y-scroll overflow-x-hidden w-full gap-4 flex flex-col-reverse lg:flex-row">
         <div className="min-w-[75%] gap-4 flex flex-col">
           <div className="bg-muted/50 min-h-[45dvh] w-full rounded-xl lg:flex-2 lg:h-full">
-            <PriceTrackingChart />
+            {!isLoading ? (
+              <PriceTrackingChart />
+            ) : (
+              <div className="w-full h-full flex items-center gap-4">
+                <div className="m-auto">
+                  <Spinner className="size-6" />
+                </div>
+              </div>
+            )}
           </div>
           <div className="bg-muted/50 min-h-[45dvh] w-full rounded-xl lg:flex-1 lg:h-full"></div>
         </div>

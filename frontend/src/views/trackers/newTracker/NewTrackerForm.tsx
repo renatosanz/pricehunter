@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { createNewTracker } from "@/services/tracker-service";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { PlaneIcon, TrainTrackIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -148,7 +149,9 @@ export default function NewTrackerForm() {
               </FormItem>
             )}
           />
-          <Button type="submit">Acceder</Button>
+          <Button type="submit">
+            A rastrear! <PlaneIcon className="size-5" />
+          </Button>
         </form>
       </Form>
     </>

@@ -1,8 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { type ColumnDef } from "@tanstack/react-table";
-import { LinkIcon } from "lucide-react";
+import { LinkIcon, TrashIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export type Tracker = {
   id: number;
@@ -21,19 +26,41 @@ export const columns: ColumnDef<Tracker>[] = [
     cell: ({ row }) => {
       const name: string = row.getValue("name");
       const trackerId: number = row.original.id;
-      return <Link to={`${trackerId}`}>{name}</Link>;
+      return (
+        <Link to={`${trackerId}`}>
+          <Tooltip>
+            <TooltipTrigger>
+              <p className=" underline overflow-hidden max-w-[40vw] text-ellipsis">
+                {name}
+              </p>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Ver Detalles</p>
+            </TooltipContent>
+          </Tooltip>
+        </Link>
+      );
     },
   },
   {
     accessorKey: "link",
-    header: "Link",
+    header: "Acciones",
     cell: ({ row }) => (
-      <a target="_blank" href={row.getValue("link")}>
-        <Button variant={"ghost"}>
-          Visitar link
-          <LinkIcon />
+      <div className="flex gap-4">
+        <a target="_blank" className="flex gap-4" href={row.getValue("link")}>
+          <Tooltip>
+            <TooltipTrigger>
+              <LinkIcon />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Vistar en tienda</p>
+            </TooltipContent>
+          </Tooltip>
+        </a>
+        <Button size="icon" variant={"destructive"}>
+          <TrashIcon />
         </Button>
-      </a>
+      </div>
     ),
   },
   {
