@@ -81,9 +81,19 @@ export const allTrackers = async (req, res) => {
  * @param {import('express').Response} res
  */
 export const getTrackerDetails = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+
+  if (!id || isNaN(parseInt(id))) {
+    return res.status(400).json({
+      success: false,
+      message: "ID de rastreador inválido",
+    });
+  }
+
   try {
-    const tracker = await Tracker.findByPk(req.params.id, {
-      where: { user_id: req.user.id },
+    const tracker = await Tracker.findByPk(id, {
+      where: { user_id: userId },
     });
 
     if (!tracker) {
