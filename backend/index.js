@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import rateLimit from "express-rate-limit";
 
 import { db } from "./db.js";
 
@@ -18,6 +19,17 @@ app.use(
     origin: "http://localhost:5173", // declarar el frontend en desarrollo
     credentials: true, // permitir las server side cookies2
     allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 100, // maximo 100 requests
+    message: {
+      success: false,
+      message: "Demasiadas solicitudes, intenta más tarde",
+    },
   })
 );
 
