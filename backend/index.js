@@ -12,26 +12,16 @@ import trackerRoutes from "./models/tracker/routes.js";
 const PORT = 3000;
 
 const app = express();
-app.use(express.json());
-app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173", // declarar el frontend en desarrollo
+    // Local development
+    origin: "http://localhost:5173",
     credentials: true, // permitir las server side cookies2
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
-
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 100, // maximo 100 requests
-    message: {
-      success: false,
-      message: "Demasiadas solicitudes, intenta más tarde",
-    },
-  })
-);
+app.use(cookieParser());
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("hola desde el server!");

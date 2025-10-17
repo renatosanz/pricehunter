@@ -1,4 +1,5 @@
 import { Tracker } from "./model.js";
+import { verifyDomainLink } from "./utils.js";
 
 /**
  * Crear un nuevo tracker de precios
@@ -18,9 +19,16 @@ export const newTracker = async (req, res) => {
     });
 
     if (tracker) {
-      return res.status(400).json({
+      return res.status(200).json({
         success: false,
         message: "Nombre no disponible",
+      });
+    }
+
+    if (!verifyDomainLink(link)) {
+      return res.status(200).json({
+        success: false,
+        message: "Link invalido, e-commerce no soportado.",
       });
     }
 
@@ -111,7 +119,48 @@ export const getTrackerDetails = async (req, res) => {
     console.error("Error: ", error.message);
     return res.status(500).json({
       success: false,
-      message: "Error al obtener todos los rastreadores",
+      message: "Error al obtener los detalles del rastreador",
+    });
+  }
+};
+
+/**
+ * Eliminar rastreador por medio de su id
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ */
+export const deleteTracker = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+
+  if (!id || isNaN(parseInt(id))) {
+    return res.status(400).json({
+      success: false,
+      message: "ID de rastreador inválido",
+    });
+  }
+
+  try {
+    const tracker = await Tracker.findByPk(id, {
+      where: { user_id: userId },
+    });
+
+    if (!tracker) {
+      return res.status(200).json({
+        success: false,
+        message: "Rastreador no encontrado.",
+      });
+    }
+
+    await tracker.destroy();
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error: ", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error al eliminar rastreador",
     });
   }
 };

@@ -8,6 +8,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { DeleteTrackerModal } from "@/modals/DeleteTrackerModal";
 
 export type Tracker = {
   id: number;
@@ -30,7 +31,7 @@ export const columns: ColumnDef<Tracker>[] = [
         <Link to={`${trackerId}`}>
           <Tooltip>
             <TooltipTrigger>
-              <p className=" underline overflow-hidden max-w-[40vw] text-ellipsis">
+              <p className="cursor-pointer underline overflow-hidden max-w-[40vw] text-ellipsis">
                 {name}
               </p>
             </TooltipTrigger>
@@ -50,16 +51,22 @@ export const columns: ColumnDef<Tracker>[] = [
         <a target="_blank" className="flex gap-4" href={row.getValue("link")}>
           <Tooltip>
             <TooltipTrigger>
-              <LinkIcon />
+              <LinkIcon className="cursor-pointer" />
             </TooltipTrigger>
             <TooltipContent>
               <p>Vistar en tienda</p>
             </TooltipContent>
           </Tooltip>
         </a>
-        <Button size="icon" variant={"destructive"}>
-          <TrashIcon />
-        </Button>
+        <DeleteTrackerModal name={row.original.name} id={row.original.id}>
+          <Button
+            className="cursor-pointer"
+            size="icon"
+            variant={"destructive"}
+          >
+            <TrashIcon />
+          </Button>
+        </DeleteTrackerModal>
       </div>
     ),
   },

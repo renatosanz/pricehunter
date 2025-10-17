@@ -7,7 +7,7 @@ interface UserI {
 
 interface AppI {
   user: UserI;
-  setUser: Function;
+  setUser: (user: UserI) => void;
 }
 
 export const useUserStore = create<AppI>((set) => ({

@@ -13,7 +13,7 @@ export function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
   );
 }
 
-export function FallbackPage() {
+export default function FallbackPage() {
   return (
     <div className="w-[100dvw] h-[100dvh] flex items-center gap-4">
       <div className="m-auto">

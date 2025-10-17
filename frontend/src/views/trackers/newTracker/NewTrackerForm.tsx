@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { createNewTracker } from "@/services/tracker-service";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlaneIcon } from "lucide-react";
+import { Asterisk, PlaneIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -60,15 +60,18 @@ export default function NewTrackerForm() {
     console.log(values);
     createNewTracker(values).then((res) => {
       if (!res?.success) {
-        toast("Error", {
+        console.log(res);
+        
+        return toast("Error", {
           description: res?.message,
-          position: "bottom-center",
+          icon: <Asterisk />,
+          position: "bottom-right",
         });
       }
 
       toast("Bienvenido", {
         description: "Registro exitoso.",
-        position: "bottom-center",
+        position: "bottom-right",
         duration: 2000,
         action: {
           label: "Ver Detalles",

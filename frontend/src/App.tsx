@@ -1,11 +1,14 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "./components/theme-provider";
+import { ThemeProvider, useTheme } from "./components/theme-provider";
 import { Toaster } from "./components/ui/sonner";
-import { lazy, Suspense } from "react";
-import { FallbackPage } from "./views/fallback/Fallback";
-import DetailsTracker from "./views/trackers/detailsTracker/DetailsTracker";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { lazy, Suspense } from "react";
+import FallbackPage from "./views/fallback/Fallback";
 
+const DetailsTracker = lazy(
+  () => import("./views/trackers/detailsTracker/DetailsTracker")
+);
+const SettingsPage = lazy(() => import("./views/config/ConfigPage"));
 const LoginPage = lazy(() => import("./views/login/LoginPage"));
 const HeroPage = lazy(() => import("./views/hero/HeroPage"));
 const HomePage = lazy(() => import("./views/home/HomePage"));
@@ -25,9 +28,10 @@ const NewTrackerPage = lazy(
 );
 
 function App() {
+  const { theme } = useTheme();
   return (
     <>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme={theme} storageKey="vite-ui-theme">
         <TooltipProvider>
           <BrowserRouter>
             <Suspense fallback={<FallbackPage />}>
@@ -48,6 +52,7 @@ function App() {
                       element={<NotificactionsPage />}
                     />
                     <Route path="new-tracker" element={<NewTrackerPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
                   </Route>
                 </Route>
               </Routes>
