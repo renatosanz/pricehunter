@@ -29,6 +29,11 @@ export const validateRegister = async (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().min(2).max(100).email().required(),
     name: Joi.string().min(2).max(100).required(),
+    phone: Joi.string()
+      .min(10)
+      .max(15)
+      .regex(/^\d{10}$/)
+      .required(),
     password: Joi.string().min(2).max(100).required(),
     password_validate: Joi.string().equal(req.body.password).required(),
   });

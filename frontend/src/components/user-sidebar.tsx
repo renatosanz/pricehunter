@@ -26,7 +26,7 @@ export function NavUser({
   user,
 }: {
   user: {
-    name: string; 
+    name: string;
     email: string;
     avatar: string;
   };
@@ -61,7 +61,7 @@ export function NavUser({
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">
+                <AvatarFallback className="text-black rounded-lg dark:text-white">
                   {user.name[0].toUpperCase()}
                 </AvatarFallback>
               </Avatar>

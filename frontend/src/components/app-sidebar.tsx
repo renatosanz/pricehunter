@@ -16,7 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { NavSecondary } from "./secondary-sidebar";
 import { NavUser } from "./user-sidebar";
 import { useUserStore } from "@/stores/user-store";
@@ -57,10 +57,17 @@ const data = {
       icon: <InfoIcon />,
     },
   ],
+  adminNav: [
+    {
+      title: "Panel de Admin",
+      url: "/home/admin",
+    },
+  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useUserStore((state) => state.user);
+  const location = useLocation();
   return (
     <Sidebar variant="floating" {...props}>
       <SidebarHeader>
@@ -98,17 +105,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {data.navMain.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
-                  <Link to={item.url} className="font-medium">
+                  <Link
+                    to={item.url}
+                    className={`font-medium ${item.url === location.pathname ? "bg-primary/30" : ""}`}
+                  >
                     {item.title}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
+            {user.role === "admin" &&
+              data.adminNav.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <Link
+                      to={item.url}
+                      className={`font-medium ${item.url === location.pathname ? "bg-primary/30" : ""}`}
+                    >
+                      {item.title}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
           </SidebarMenu>
           <NavSecondary items={data.navSecondary} className="mt-auto" />
         </SidebarGroup>
         <SidebarFooter>
-          <NavUser user={{ name: "renato", email: "idk", avatar: "" }} />
+          <NavUser user={{ ...user, avatar: "" }} />
         </SidebarFooter>
       </SidebarContent>
     </Sidebar>

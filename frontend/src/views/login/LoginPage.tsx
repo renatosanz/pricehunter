@@ -54,7 +54,7 @@ export default function LoginPage() {
     if (isUserLogged()) {
       navigate("/home", { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -186,11 +186,8 @@ export default function LoginPage() {
                         </FormItem>
                       )}
                     />
-                    <Button
-                      type="submit"
-                      className="w-full"
-                    >
-                      Submit
+                    <Button type="submit" className="w-full">
+                      Acceder
                     </Button>
                   </form>
                 </Form>
@@ -204,10 +201,6 @@ export default function LoginPage() {
               </div>
             </CardContent>
           </Card>
-          <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-            By clicking continue, you agree to our{" "}
-            <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-          </div>
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ import { lazy, Suspense } from "react";
 import FallbackPage from "./views/fallback/Fallback";
 
 const DetailsTracker = lazy(
-  () => import("./views/trackers/detailsTracker/DetailsTracker")
+  () => import("./views/trackers/detailsTracker/DetailsTracker"),
 );
 const SettingsPage = lazy(() => import("./views/config/ConfigPage"));
 const LoginPage = lazy(() => import("./views/login/LoginPage"));
@@ -16,15 +16,15 @@ const RegisterPage = lazy(() => import("./views/login/RegisterPage"));
 const NotFound = lazy(() => import("./views/NotFound"));
 const SessionLayout = lazy(() => import("./layouts/SessionLayout"));
 const TrackersPage = lazy(
-  () => import("./views/trackers/allTrackers/TrackersPage")
+  () => import("./views/trackers/allTrackers/TrackersPage"),
 );
 const HistoryPage = lazy(() => import("./views/history/HistoryPage"));
 const Dashboard = lazy(() => import("./components/Dashboard"));
 const NotificactionsPage = lazy(
-  () => import("./views/notifications/NotificactionsPage")
+  () => import("./views/notifications/NotificactionsPage"),
 );
 const NewTrackerPage = lazy(
-  () => import("./views/trackers/newTracker/NewTrackerPage")
+  () => import("./views/trackers/newTracker/NewTrackerPage"),
 );
 
 function App() {

@@ -39,6 +39,10 @@ const formSchema = z
         error: "Email no valido",
       })
       .nonempty({ error: "Ingresa un email." }),
+    phone: z
+      .string()
+      .regex(/^\d{10}$/, { error: "Telefono no valido" })
+      .nonempty({ error: "Ingresa un email." }),
     password: z
       .string()
       .min(8, {
@@ -64,6 +68,7 @@ export default function RegisterPage() {
       password: "",
       name: "",
       password_validate: "",
+      phone: "",
     },
   });
 
@@ -169,6 +174,23 @@ export default function RegisterPage() {
                           type="email"
                           placeholder="tu_email@email.com"
                           autoComplete="email"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          type="tel"
+                          placeholder="2212121212"
+                          autoComplete="tel"
                           {...field}
                         />
                       </FormControl>

@@ -38,6 +38,31 @@ export function isAuthenticated(req, res, next) {
 }
 
 /**
+ * Middleware de autenticación de admins
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
+export function isAdmin(req, res, next) {
+  jwt.verify(access_token, process.env.SEED_AUTENTICACION, (err, decoded) => {
+    if (err) {
+      console.error("Token verification failed:", err);
+      return res
+        .clearCookie("access_token", {
+          sameSite: "none",
+          httpOnly: true,
+          secure: true,
+        })
+        .status(403)
+        .json({ success: false });
+    } else {
+      req.user = { id: decoded.user };
+      return next();
+    }
+  });
+}
+
+/**
  * Manejo de login de usuario
  * @param {import('express').Request & { user?: any }} req
  * @param {import('express').Response} res
@@ -69,7 +94,7 @@ export const userLogin = async (req, res) => {
     const token = jwt.sign(
       { user: user_db.id },
       process.env.SEED_AUTENTICACION || "",
-      { expiresIn: process.env.CADUCIDAD_TOKEN }
+      { expiresIn: process.env.CADUCIDAD_TOKEN },
     );
 
     res
@@ -124,7 +149,7 @@ export const userLogOut = async (req, res) => {
           })
           .status(200)
           .json({ success: true });
-      }
+      },
     );
   } catch (error) {
     console.log("Error al cerrar sesion", error);
