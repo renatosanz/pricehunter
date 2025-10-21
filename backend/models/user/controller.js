@@ -42,7 +42,7 @@ export const registerUser = async (req, res) => {
 export const getUserData = async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
-      attributes: ["name", "email", "role"],
+      attributes: ["name", "email", "role", "phone"],
     });
     if (!user) {
       return res.status(404).json({
@@ -53,6 +53,42 @@ export const getUserData = async (req, res) => {
     return res.status(200).json({
       success: true,
       user,
+    });
+  } catch (error) {
+    console.error("Error al obtener informacion del usuario:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener informacion del usuario",
+    });
+  }
+};
+
+/**
+ * Retornar informacion del usuario
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ */
+export const updateUser = async (req, res) => {
+  try {
+    const { name, phone, email } = req.body;
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Usuario no valido.",
+      });
+    }
+    user.name = name;
+    user.phone = phone;
+    user.email = email;
+    await user.save();
+    return res.status(200).json({
+      success: true,
+      user: {
+        name: user.name,
+        phone: user.phone,
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error("Error al obtener informacion del usuario:", error);

@@ -3,6 +3,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* CSS */
+:root {
+  font-family: Inter, sans-serif;
+  font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
+}
+@supports (font-variation-settings: normal) {
+  :root { font-family: InterVariable, sans-serif; }
+}
+
 :root {
   /* Updated color palette for PriceHunter with orange theme */
   --background: oklch(1 0 0); /* #ffffff */

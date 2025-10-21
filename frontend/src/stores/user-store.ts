@@ -1,9 +1,10 @@
 import { create } from "zustand";
 
-interface UserI {
+export interface UserI {
   name: string;
   email: string;
   role: string;
+  phone: string;
 }
 
 interface AppI {
@@ -12,7 +13,7 @@ interface AppI {
 }
 
 export const useUserStore = create<AppI>((set) => ({
-  user: { name: " ", email: " ", role: "user" },
+  user: { name: " ", email: " ", role: "user", phone: " " },
   setUser: (user: UserI) => {
     set({
       user: user,

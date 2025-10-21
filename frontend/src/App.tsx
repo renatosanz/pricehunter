@@ -8,7 +8,7 @@ import FallbackPage from "./views/fallback/Fallback";
 const DetailsTracker = lazy(
   () => import("./views/trackers/detailsTracker/DetailsTracker"),
 );
-const SettingsPage = lazy(() => import("./views/config/ConfigPage"));
+const SettingsPage = lazy(() => import("./views/settings/SettingsPage"));
 const LoginPage = lazy(() => import("./views/login/LoginPage"));
 const HeroPage = lazy(() => import("./views/hero/HeroPage"));
 const HomePage = lazy(() => import("./views/home/HomePage"));
@@ -19,7 +19,7 @@ const TrackersPage = lazy(
   () => import("./views/trackers/allTrackers/TrackersPage"),
 );
 const HistoryPage = lazy(() => import("./views/history/HistoryPage"));
-const Dashboard = lazy(() => import("./components/Dashboard"));
+const Dashboard = lazy(() => import("./views/home/Dashboard"));
 const NotificactionsPage = lazy(
   () => import("./views/notifications/NotificactionsPage"),
 );

@@ -44,3 +44,27 @@ export const validateRegister = async (req, res, next) => {
   }
   next();
 };
+
+/**
+ * Middleware de validacion de `updateUser`
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
+export const validateUpdateUser = async (req, res, next) => {
+  const schema = Joi.object({
+    email: Joi.string().min(2).max(100).email().required(),
+    name: Joi.string().min(2).max(100).required(),
+    phone: Joi.string()
+      .min(10)
+      .max(15)
+      .regex(/^\d{10}$/)
+      .required(),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+  next();
+};

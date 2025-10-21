@@ -1,4 +1,5 @@
 import { environment } from "@/env";
+import type { UserI } from "@/stores/user-store";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -70,7 +71,7 @@ export async function registerUser(data: {
 export const verifyUserSession = async (): Promise<
   | {
       success: boolean;
-      user: { name: string; email: string };
+      user: UserI;
     }
   | undefined
 > => {
@@ -78,12 +79,28 @@ export const verifyUserSession = async (): Promise<
     const response = await axios.get(`${environment.url_api}/user/session`, {
       withCredentials: true,
     });
+    return response.data;
+  } catch (error) {
+    console.error("Error al verificar la sesion.");
+    return undefined;
+  }
+};
 
-    if (response.data.success) {
-      Cookies.set("isLogged", "true");
-    } else {
-      Cookies.remove("isLogged");
+export const updateUser = async (data: {
+  name: string;
+  phone: string;
+  email: string;
+}): Promise<
+  | {
+      success: boolean;
+      user: UserI;
     }
+  | undefined
+> => {
+  try {
+    const response = await axios.patch(`${environment.url_api}/user/`, data, {
+      withCredentials: true,
+    });
 
     return response.data;
   } catch (error) {
