@@ -68,7 +68,5 @@
 
 .tag-list li {
   padding: 0.3rem;
-  background: var(--clr-primary-400);
-  border-radius: 0.5rem;
-  box-shadow: 0 0.5rem 1rem -0.25rem var(--clr-primary-900);
 }
+

@@ -1,7 +1,6 @@
 import { DataTypes } from "@sequelize/core";
 import { db } from "../../db.js";
 
-
 export const Tracker = db.define(
   "Tracker",
   {
@@ -45,7 +44,8 @@ export const Tracker = db.define(
         min: 5,
       },
     },
-    traceInterval: { // en minutos
+    traceInterval: {
+      // en minutos
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
@@ -53,20 +53,25 @@ export const Tracker = db.define(
         max: 1440,
       },
     },
+    target_price: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0,
+    },
     active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
-    sms_enabled:{
+    sms_enabled: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
-    email_enabled:{
+    email_enabled: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
-    }
+    },
   },
   {
     tableName: "tracker",
+    paranoid: true,
   }
 );

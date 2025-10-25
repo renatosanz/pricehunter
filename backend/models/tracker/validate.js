@@ -10,9 +10,10 @@ export const validateNewTracker = async (req, res, next) => {
   const schema = Joi.object({
     name: Joi.string().min(5).max(64).required(),
     link: Joi.string().min(5).uri().required(),
-    sms_enabled:Joi.boolean().required(),
-    email_enabled:Joi.boolean().required(),
+    sms_enabled: Joi.boolean().required(),
+    email_enabled: Joi.boolean().required(),
     traceInterval: Joi.number().min(0).max(1440).required(),
+    target_price: Joi.number().min(0).max(999999),
   });
 
   const { error } = schema.validate(req.body);

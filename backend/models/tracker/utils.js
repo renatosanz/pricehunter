@@ -1,5 +1,5 @@
 const sopported_domains = [
-  "www.mercadolibre.com.mx",
+  "articulo.mercadolibre.com.mx",
   "www.amazon.com.mx",
   "es.aliexpress.com",
 ];

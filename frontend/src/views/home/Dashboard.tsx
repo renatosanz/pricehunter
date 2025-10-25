@@ -23,11 +23,16 @@ import {
 import { useNavigate, type NavigateFunction } from "react-router-dom";
 import "./styles.css";
 import { useEffect, useRef } from "react";
+import { useUserStore } from "@/stores/user-store";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { name } = useUserStore();
   return (
     <ContentLayout title="Dashboard">
+      <h1 className="text-xlscroll-m-20 text-3xl font-extrabold tracking-tight text-balance">
+        Bienvenido {name}
+      </h1>
       <div className="grid auto-rows-min gap-4 md:grid-cols-3  xl:grid">
         <CreateNewTrackerBanner nav={navigate} />
         <div className="bg-muted/50 aspect-video rounded-xl" />

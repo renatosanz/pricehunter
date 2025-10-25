@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { Tracker } from "./model.js";
 import { verifyDomainLink } from "./utils.js";
 
@@ -9,7 +10,14 @@ import { verifyDomainLink } from "./utils.js";
 export const newTracker = async (req, res) => {
   try {
     const user = req.user;
-    const { name, link, traceInterval, sms_enabled, email_enabled } = req.body;
+    const {
+      name,
+      link,
+      traceInterval,
+      sms_enabled,
+      email_enabled,
+      target_price = 0,
+    } = req.body;
 
     const tracker = await Tracker.findOne({
       where: {
@@ -39,6 +47,7 @@ export const newTracker = async (req, res) => {
       user_id: user.id,
       sms_enabled: sms_enabled,
       email_enabled: email_enabled,
+      target_price: target_price,
     });
     return res.status(201).json({
       success: true,
@@ -161,6 +170,39 @@ export const deleteTracker = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Error al eliminar rastreador",
+    });
+  }
+};
+
+/**
+ * Obtener todos los trackers de un usuario
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ */
+export const historyTrackers = async (req, res) => {
+  try {
+    const user = req.user;
+    const trackers = await Tracker.findAll({
+      where: {
+        user_id: user.id,
+        deletedAt: {
+          [Op.not]: null,
+        },
+      },
+      attributes: ["name", "id", "link", "traceInterval", "active","target_price"],
+      paranoid: false,
+      limit: 10,
+    });
+
+    return res.status(200).json({
+      success: true,
+      trackers,
+    });
+  } catch (error) {
+    console.error("Error: ", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener todos los rastreadores",
     });
   }
 };

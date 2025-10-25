@@ -2,13 +2,18 @@ import { environment } from "@/env";
 import type { Tracker } from "@/views/trackers/allTrackers/columns";
 import axios from "axios";
 
-export const createNewTracker = async (newTrackerData: {
+interface NewTracker {
   name: string;
   link: string;
   traceInterval: number;
   sms_enabled: boolean;
   email_enabled: boolean;
-}): Promise<
+  target_price: number;
+}
+
+export const createNewTracker = async (
+  newTrackerData: NewTracker
+): Promise<
   | {
       success: boolean;
       tracker: Tracker;
@@ -18,7 +23,7 @@ export const createNewTracker = async (newTrackerData: {
 > => {
   try {
     const response = await axios.post(
-      `${environment.url_api}/tracker/new`,
+      `${environment.url_api}/tracker`,
       newTrackerData,
       {
         withCredentials: true,
@@ -72,10 +77,27 @@ export const deleteTracker = async (
       {
         withCredentials: true,
       }
-    );    
+    );
     return response.data;
   } catch (error) {
     console.error("Error al eliminar rastreador.");
+    return undefined;
+  }
+};
+
+export const getHistory = async (): Promise<
+  { message?: string; success: boolean; trackers: Tracker[] } | undefined
+> => {
+  try {
+    const response = await axios.get(
+      `${environment.url_api}/tracker/history`,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener el historial de rastreadores.");
     return undefined;
   }
 };

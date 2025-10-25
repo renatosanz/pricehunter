@@ -6,10 +6,12 @@
 /* CSS */
 :root {
   font-family: Inter, sans-serif;
-  font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
+  font-feature-settings: "liga" 1, "calt" 1; /* fix for Chrome */
 }
 @supports (font-variation-settings: normal) {
-  :root { font-family: InterVariable, sans-serif; }
+  :root {
+    font-family: InterVariable, sans-serif;
+  }
 }
 
 :root {
@@ -136,4 +138,31 @@
 
 [data-description] {
   color: var(--text-secondary-foreground) !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+h1 {
+  @apply scroll-m-20 text-4xl font-extrabold tracking-tight text-balance;
+}
+h2 {
+  @apply scroll-m-20 pb-2 text-3xl font-semibold tracking-tight ;
+}
+h3 {
+  @apply scroll-m-20 text-2xl font-semibold tracking-tight
+}
+h4 {
+  @apply scroll-m-20 text-xl font-semibold tracking-tight;
+}
+p {
+  @apply leading-7;
 }

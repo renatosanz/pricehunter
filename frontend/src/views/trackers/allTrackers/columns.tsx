@@ -12,12 +12,18 @@ import { DeleteTrackerModal } from "@/modals/DeleteTrackerModal";
 
 export type Tracker = {
   id: number;
-  traceInterval: number;
-  active: boolean;
+  user_id: number;
   name: string;
   link: string;
+  platform: string | null;
+  image: string | null;
+  traceInterval: number;
+  target_price: number;
+  active: boolean;
+  sms_enabled: boolean;
+  email_enabled: boolean;
   createdAt: string;
-  image: string;
+  updatedAt: string;
 };
 
 export const columns: ColumnDef<Tracker>[] = [

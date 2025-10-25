@@ -6,13 +6,15 @@ import {
   newTracker,
   getTrackerDetails,
   deleteTracker,
+  historyTrackers,
 } from "./controller.js";
 
 const router = Router();
 router.use(isAuthenticated);
 
-router.post("/new", validateNewTracker, newTracker);
+router.post("/", validateNewTracker, newTracker);
 router.get("/all", allTrackers);
+router.get("/history", historyTrackers);
 router.get("/:id", getTrackerDetails);
 router.delete("/:id", deleteTracker);
 

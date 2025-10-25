@@ -41,6 +41,7 @@ const schema = z.object({
     .min(1, { error: "El intervalo debe ser al menos 1" }),
   sms_enabled: z.boolean(),
   email_enabled: z.boolean(),
+  target_price: z.number().nonnegative().min(0).max(999999),
 });
 
 export default function NewTrackerForm() {
@@ -51,17 +52,15 @@ export default function NewTrackerForm() {
       name: "",
       link: "",
       traceInterval: 2,
-      email_enabled: true,
-      sms_enabled: true,
+      email_enabled: false,
+      sms_enabled: false,
+      target_price: 0,
     },
   });
 
   const onSubmit = (values: z.infer<typeof schema>) => {
-    console.log(values);
     createNewTracker(values).then((res) => {
       if (!res?.success) {
-        console.log(res);
-        
         return toast("Error", {
           description: res?.message,
           icon: <Asterisk />,
@@ -159,6 +158,36 @@ export default function NewTrackerForm() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="target_price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Precio Meta</FormLabel>
+                <FormDescription>
+                  Establece el precio objetivo al que te gustaria ver el
+                  producto. Nosotros te noficicaremos por Telegram cuando el
+                  producto alcanze dicho precio.
+                </FormDescription>
+                <div className="relative w-full">
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      className="pr-10 border-b-blue-950"
+                      onChange={(value) =>
+                        field.onChange(parseInt(value.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm">
+                    MXN
+                  </span>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Label className="hover:bg-accent/50 flex flex-col items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
             <FormLabel className="text-base text-xlscroll-m-20 font-extrabold tracking-tight text-balance">
               Notificaciones
@@ -171,7 +200,6 @@ export default function NewTrackerForm() {
                   <FormControl>
                     <Checkbox
                       id="toggle-1"
-                      defaultChecked
                       className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
                       onCheckedChange={(checked) => field.onChange(checked)}
                     />
@@ -191,7 +219,6 @@ export default function NewTrackerForm() {
                   <FormControl>
                     <Checkbox
                       id="toggle-2"
-                      defaultChecked
                       className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
                       onCheckedChange={(checked) => field.onChange(checked)}
                     />
