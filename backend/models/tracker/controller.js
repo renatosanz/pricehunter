@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
 import { Tracker } from "./model.js";
-import { verifyDomainLink } from "./utils.js";
+import { getHistoryData, verifyDomainLink } from "./utils.js";
 
 /**
  * Crear un nuevo tracker de precios
@@ -120,9 +120,11 @@ export const getTrackerDetails = async (req, res) => {
       });
     }
 
+    const price_history = await getHistoryData(tracker.id);
     return res.status(200).json({
       success: true,
       tracker: tracker,
+      price_history,
     });
   } catch (error) {
     console.error("Error: ", error.message);
@@ -189,7 +191,14 @@ export const historyTrackers = async (req, res) => {
           [Op.not]: null,
         },
       },
-      attributes: ["name", "id", "link", "traceInterval", "active","target_price"],
+      attributes: [
+        "name",
+        "id",
+        "link",
+        "traceInterval",
+        "active",
+        "target_price",
+      ],
       paranoid: false,
       limit: 10,
     });
