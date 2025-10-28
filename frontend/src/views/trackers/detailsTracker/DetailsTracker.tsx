@@ -2,7 +2,7 @@ import ContentLayout from "@/layouts/ContentLayout";
 import { getTrackerDetails } from "@/services/tracker-service";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Tracker } from "../allTrackers/columns";
+import type { PriceHistory, Tracker } from "../allTrackers/columns";
 import { PriceTrackingChart } from "./PriceTrackingChart";
 import { Spinner } from "@/views/fallback/Fallback";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input";
 export default function DetailsTracker() {
   const { id } = useParams();
   const [details, setDetails] = useState<Tracker>();
+  const [historyData, setHistoryData] = useState<PriceHistory>();
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
@@ -51,6 +52,7 @@ export default function DetailsTracker() {
             return;
           }
           setDetails(res?.tracker);
+          setHistoryData(res?.price_history);
         })
         .finally(() => {
           setTimeout(() => {
@@ -58,7 +60,7 @@ export default function DetailsTracker() {
           }, 500);
         });
     }
-    return () => {};
+    return () => { };
   }, []);
 
   return (
@@ -87,8 +89,8 @@ export default function DetailsTracker() {
       <div className="max-h-full overflow-y-scroll overflow-x-hidden w-full gap-4 flex flex-col-reverse lg:flex-row">
         <div className="min-w-[70%] gap-4 flex flex-col">
           <div className="bg-muted/50 min-h-[45dvh] w-full rounded-xl lg:flex-2 lg:h-full">
-            {!isLoading ? (
-              <PriceTrackingChart />
+            {!isLoading && historyData ? (
+              <PriceTrackingChart history_data={historyData.history} />
             ) : (
               <div className="w-full h-full flex items-center gap-4">
                 <div className="m-auto">
@@ -104,7 +106,7 @@ export default function DetailsTracker() {
             <>
               <h2>
                 Precio Actual:{" "}
-                <span className="bg-sidebar-ring p-2 rounded-xl">$300</span>
+                <span className="bg-sidebar-ring p-2 rounded-xl">${historyData?.history ? historyData?.history.at(-1)?.price.toString() : "???"}</span>
               </h2>
               <h3>Información</h3>
               <div className="flex flex-wrap gap-2">

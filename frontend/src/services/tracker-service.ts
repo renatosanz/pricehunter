@@ -1,5 +1,5 @@
 import { environment } from "@/env";
-import type { Tracker } from "@/views/trackers/allTrackers/columns";
+import type { PriceHistory, Tracker } from "@/views/trackers/allTrackers/columns";
 import axios from "axios";
 
 interface NewTracker {
@@ -15,10 +15,10 @@ export const createNewTracker = async (
   newTrackerData: NewTracker
 ): Promise<
   | {
-      success: boolean;
-      tracker: Tracker;
-      message?: string;
-    }
+    success: boolean;
+    tracker: Tracker;
+    message?: string;
+  }
   | undefined
 > => {
   try {
@@ -55,12 +55,13 @@ export const getAllTrackers = async (): Promise<
 export const getTrackerDetails = async (
   id: number
 ): Promise<
-  { tracker: Tracker; message?: string; success: boolean } | undefined
+  { tracker: Tracker; price_history: PriceHistory; message?: string; success: boolean } | undefined
 > => {
   try {
     const response = await axios.get(`${environment.url_api}/tracker/${id}`, {
       withCredentials: true,
     });
+
     return response.data;
   } catch (error) {
     console.error("Error al obtener detalles del rastreador.");

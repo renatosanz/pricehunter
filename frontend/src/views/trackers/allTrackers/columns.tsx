@@ -26,6 +26,18 @@ export type Tracker = {
   updatedAt: string;
 };
 
+export interface PriceHistory {
+  id: number
+  name: string
+  site: string
+  history: History[]
+}
+
+export interface History {
+  price: number
+  timestamp: string
+}
+
 export const columns: ColumnDef<Tracker>[] = [
   {
     accessorKey: "name",
