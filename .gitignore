@@ -3,6 +3,7 @@
 backend/node_modules
 backend/db.sqlite
 backend/.env
+backend/trackers
 
 frontend/node_modules
 frontend/dist
