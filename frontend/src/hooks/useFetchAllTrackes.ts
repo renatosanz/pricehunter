@@ -8,14 +8,18 @@ import { useEffect, useState } from "react";
  */
 export default function useFetchAllTrackers(): Tracker[] | undefined {
   const [trackersData, setTrackersData] = useState<Tracker[] | undefined>([]);
-  useEffect(() => {
+  const fetchTrackerList = () => {
     getAllTrackers().then((res) => {
       if (res?.success) {
         setTrackersData(res.trackers);
       } else {
         setTrackersData(undefined);
       }
-    });
-  }, []);
+    }
+    );
+  }
+  useEffect(() => {
+    fetchTrackerList()
+  }, [trackersData]);
   return trackersData;
 }
