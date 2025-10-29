@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 export default function useFetchDashboardData() {
   const [dashboardData, setDashboardData] = useState<DashboardDataResponse>();
   const [newWeekTrackers, setNewWeekTrackers] = useState<number>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getLastWeekTrackers = (
     latestTrackers: {
@@ -23,15 +24,20 @@ export default function useFetchDashboardData() {
   };
 
   const refreshData = () => {
-    getDashboardData().then((data) => {
-      setDashboardData(data);
-      if (data?.latestTrackers) {
-        getLastWeekTrackers(data.latestTrackers);
-      }
-    });
+    setIsLoading(true);
+    getDashboardData()
+      .then((data) => {
+        setDashboardData(data);
+        if (data?.latestTrackers) {
+          getLastWeekTrackers(data.latestTrackers);
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
   useEffect(() => {
     refreshData();
   }, []);
-  return { dashboardData, refreshData, newWeekTrackers };
+  return { dashboardData, newWeekTrackers, refreshData, isLoading };
 }

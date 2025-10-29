@@ -15,7 +15,7 @@ import { Spinner } from "../fallback/Fallback";
 
 export default function Dashboard() {
   const { user } = useUserStore();
-  const { dashboardData, newWeekTrackers } = useFetchDashboardData();
+  const { dashboardData, newWeekTrackers, isLoading } = useFetchDashboardData();
 
   return (
     <ContentLayout title="Dashboard">
@@ -40,6 +40,7 @@ export default function Dashboard() {
               : "Sin cambios"
           }
           icon={<TrendingUp className="h-4 w-4" />}
+          isLoading={isLoading}
           trend="up"
         />
         <StatsCard
@@ -47,6 +48,7 @@ export default function Dashboard() {
           value={dashboardData?.nofificationCount}
           description="Sin cambios"
           icon={<Bell className="h-4 w-4" />}
+          isLoading={isLoading}
           trend="neutral"
         />
       </div>
@@ -68,12 +70,14 @@ function StatsCard({
   description,
   icon,
   trend,
+  isLoading,
 }: {
   title: string;
   value: number | string | undefined;
   description: string;
   icon: React.ReactNode;
   trend: "up" | "down" | "neutral";
+  isLoading: boolean;
 }) {
   const trendColors = {
     up: "text-green-600",
@@ -84,7 +88,7 @@ function StatsCard({
   return (
     <Card className="relative overflow-hidden">
       <CardContent className="p-6">
-        {value ? (
+        {!isLoading ? (
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-muted-foreground">
