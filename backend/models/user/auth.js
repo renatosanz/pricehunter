@@ -31,32 +31,7 @@ export function isAuthenticated(req, res, next) {
         .status(403)
         .json({ success: false });
     } else {
-      req.user = { id: decoded.user };
-      return next();
-    }
-  });
-}
-
-/**
- * Middleware de autenticación de admins
- * @param {import('express').Request & { user?: any }} req
- * @param {import('express').Response} res
- * @param {import('express').NextFunction} next
- */
-export function isAdmin(req, res, next) {
-  jwt.verify(access_token, process.env.SEED_AUTENTICACION, (err, decoded) => {
-    if (err) {
-      console.error("Token verification failed:", err);
-      return res
-        .clearCookie("access_token", {
-          sameSite: "none",
-          httpOnly: true,
-          secure: true,
-        })
-        .status(403)
-        .json({ success: false });
-    } else {
-      req.user = { id: decoded.user };
+      req.user = { id: decoded.user, role: decoded.role };
       return next();
     }
   });
@@ -80,6 +55,13 @@ export const userLogin = async (req, res) => {
         message: "Usuario no valido.",
       });
     }
+    if (user_db.isBanned) {
+      return res.json({
+        success: false,
+        message:
+          "Usuario desactivado temporalmente. Contacta a Soporte Tecnico para saber más.",
+      });
+    }
 
     // valida que la contraseña escrita por el usuario, sea la almacenada en la db
     if (!bcrypt.compareSync(body.password, user_db.password)) {
@@ -92,11 +74,12 @@ export const userLogin = async (req, res) => {
 
     // crear token de sesion
     const token = jwt.sign(
-      { user: user_db.id },
+      { user: user_db.id, role: user_db.role },
       process.env.SEED_AUTENTICACION || "",
-      { expiresIn: process.env.CADUCIDAD_TOKEN },
+      { expiresIn: process.env.CADUCIDAD_TOKEN }
     );
     user_db.lastLoggin = new Date();
+    user_db.isLogged = true;
     await user_db.save();
     return res
       .cookie("access_token", token, {
@@ -139,9 +122,11 @@ export const userLogOut = async (req, res) => {
         }
 
         const { user } = decoded;
-        await User.findOne({
+        const user_db = await User.findOne({
           where: { id: user },
         });
+        user_db.isLogged = false;
+        user_db.save();
         return res
           .clearCookie("access_token", {
             sameSite: "none",
@@ -150,7 +135,7 @@ export const userLogOut = async (req, res) => {
           })
           .status(200)
           .json({ success: true });
-      },
+      }
     );
   } catch (error) {
     console.log("Error al cerrar sesion", error);

@@ -8,6 +8,7 @@ import { db } from "./db.js";
 //import routes
 import userRoutes from "./models/user/routes.js";
 import trackerRoutes from "./models/tracker/routes.js";
+import adminRoutes from "./models/user/admin/routes.js";
 import { create_default_admins } from "./models/user/model.js";
 
 const PORT = 3000;
@@ -19,7 +20,7 @@ app.use(
     origin: "http://localhost:5173",
     credentials: true, // permitir las server side cookies2
     allowedHeaders: ["Content-Type", "Authorization"],
-  }),
+  })
 );
 app.use(cookieParser());
 app.use(express.json());
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/user", userRoutes);
 app.use("/api/tracker", trackerRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.use(/(.*)/, (req, res) => {
   res.status(404).json({ error: "Ruta no encontrada" });

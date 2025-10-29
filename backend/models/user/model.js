@@ -49,6 +49,14 @@ export const User = db.define(
     lastLoggin: {
       type: DataTypes.DATE,
     },
+    isLogged: {
+      type: DataTypes.BOOLEAN,
+      default: false,
+    },
+    isBanned: {
+      type: DataTypes.BOOLEAN,
+      default: false,
+    },
   },
   {
     tableName: "user",
@@ -57,7 +65,7 @@ export const User = db.define(
         await create_default_admins();
       },
     },
-  },
+  }
 );
 
 User.hasMany(Tracker, { foreignKey: "user_id" });
