@@ -3,14 +3,57 @@ import ContentLayout from "@/layouts/ContentLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { MoreHorizontal, Plus, Search, Edit, Trash2,  User } from "lucide-react";
+import { MoreHorizontal, Plus, Search, Edit, Trash2, User } from "lucide-react";
+import useAdminDashboardData from "@/hooks/useAdminDashboardData";
 
 interface User {
   id: string;
@@ -36,8 +79,10 @@ export default function AdminDashboardView() {
     name: "",
     email: "",
     role: "user" as User["role"],
-    status: "active" as User["status"]
+    status: "active" as User["status"],
   });
+
+  const { dashboardData } = useAdminDashboardData();
 
   // Mock data - replace with actual API calls
   useEffect(() => {
@@ -49,7 +94,7 @@ export default function AdminDashboardView() {
         role: "admin",
         status: "active",
         createdAt: "2024-01-15",
-        lastLogin: "2024-10-30"
+        lastLogin: "2024-10-30",
       },
       {
         id: "2",
@@ -58,7 +103,7 @@ export default function AdminDashboardView() {
         role: "user",
         status: "active",
         createdAt: "2024-02-20",
-        lastLogin: "2024-10-29"
+        lastLogin: "2024-10-29",
       },
       {
         id: "3",
@@ -66,7 +111,7 @@ export default function AdminDashboardView() {
         email: "bob.johnson@example.com",
         role: "moderator",
         status: "inactive",
-        createdAt: "2024-03-10"
+        createdAt: "2024-03-10",
       },
       {
         id: "4",
@@ -75,8 +120,8 @@ export default function AdminDashboardView() {
         role: "user",
         status: "suspended",
         createdAt: "2024-04-05",
-        lastLogin: "2024-10-25"
-      }
+        lastLogin: "2024-10-25",
+      },
     ];
     setUsers(mockUsers);
     setFilteredUsers(mockUsers);
@@ -85,23 +130,24 @@ export default function AdminDashboardView() {
   // Filter users based on search and filters
   useEffect(() => {
     let result = users;
-    
+
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      result = result.filter(user => 
-        user.name.toLowerCase().includes(term) ||
-        user.email.toLowerCase().includes(term)
+      result = result.filter(
+        (user) =>
+          user.name.toLowerCase().includes(term) ||
+          user.email.toLowerCase().includes(term)
       );
     }
-    
+
     if (roleFilter !== "all") {
-      result = result.filter(user => user.role === roleFilter);
+      result = result.filter((user) => user.role === roleFilter);
     }
-    
+
     if (statusFilter !== "all") {
-      result = result.filter(user => user.status === statusFilter);
+      result = result.filter((user) => user.status === statusFilter);
     }
-    
+
     setFilteredUsers(result);
   }, [users, searchTerm, roleFilter, statusFilter]);
 
@@ -109,29 +155,29 @@ export default function AdminDashboardView() {
     const newUser: User = {
       id: Date.now().toString(),
       ...formData,
-      createdAt: new Date().toISOString().split('T')[0]
+      createdAt: new Date().toISOString().split("T")[0],
     };
-    setUsers(prev => [...prev, newUser]);
+    setUsers((prev) => [...prev, newUser]);
     setIsAddDialogOpen(false);
     resetForm();
   };
 
   const handleEditUser = () => {
     if (!selectedUser) return;
-    
-    setUsers(prev => prev.map(user => 
-      user.id === selectedUser.id 
-        ? { ...user, ...formData }
-        : user
-    ));
+
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === selectedUser.id ? { ...user, ...formData } : user
+      )
+    );
     setIsEditDialogOpen(false);
     resetForm();
   };
 
   const handleDeleteUser = () => {
     if (!selectedUser) return;
-    
-    setUsers(prev => prev.filter(user => user.id !== selectedUser.id));
+
+    setUsers((prev) => prev.filter((user) => user.id !== selectedUser.id));
     setIsDeleteDialogOpen(false);
     setSelectedUser(null);
   };
@@ -142,7 +188,7 @@ export default function AdminDashboardView() {
       name: user.name,
       email: user.email,
       role: user.role,
-      status: user.status
+      status: user.status,
     });
     setIsEditDialogOpen(true);
   };
@@ -157,34 +203,42 @@ export default function AdminDashboardView() {
       name: "",
       email: "",
       role: "user",
-      status: "active"
+      status: "active",
     });
     setSelectedUser(null);
   };
 
   const getStatusVariant = (status: User["status"]) => {
     switch (status) {
-      case "active": return "default";
-      case "inactive": return "secondary";
-      case "suspended": return "destructive";
-      default: return "outline";
+      case "active":
+        return "default";
+      case "inactive":
+        return "secondary";
+      case "suspended":
+        return "destructive";
+      default:
+        return "outline";
     }
   };
 
   const getRoleVariant = (role: User["role"]) => {
     switch (role) {
-      case "admin": return "destructive";
-      case "moderator": return "default";
-      case "user": return "outline";
-      default: return "secondary";
+      case "admin":
+        return "destructive";
+      case "moderator":
+        return "default";
+      case "user":
+        return "outline";
+      default:
+        return "secondary";
     }
   };
 
   const stats = {
-    total: users.length,
-    active: users.filter(u => u.status === "active").length,
-    admins: users.filter(u => u.role === "admin").length,
-    suspended: users.filter(u => u.status === "suspended").length
+    total: dashboardData?.usersCount,
+    active: dashboardData?.activeUsers,
+    admins: dashboardData?.adminsCount,
+    suspended: dashboardData?.bannedUsers,
   };
 
   return (
@@ -193,12 +247,17 @@ export default function AdminDashboardView() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Gestión de Usuarios</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Gestión de Usuarios
+            </h1>
             <p className="text-muted-foreground">
               Administra y gestiona los usuarios del sistema
             </p>
           </div>
-          <Button onClick={() => setIsAddDialogOpen(true)} className="flex items-center gap-2">
+          <Button
+            onClick={() => setIsAddDialogOpen(true)}
+            className="flex items-center gap-2"
+          >
             <Plus className="h-4 w-4" />
             Agregar Usuario
           </Button>
@@ -208,7 +267,9 @@ export default function AdminDashboardView() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Usuarios</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Usuarios
+              </CardTitle>
               <User className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -217,7 +278,9 @@ export default function AdminDashboardView() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Usuarios Activos</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Usuarios Activos
+              </CardTitle>
               <Badge variant="default" className="h-4 w-4 bg-green-500" />
             </CardHeader>
             <CardContent>
@@ -226,7 +289,9 @@ export default function AdminDashboardView() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Administradores</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Administradores
+              </CardTitle>
               <Badge variant="destructive" className="h-4 w-4" />
             </CardHeader>
             <CardContent>
@@ -291,7 +356,9 @@ export default function AdminDashboardView() {
           <CardHeader>
             <CardTitle>Lista de Usuarios</CardTitle>
             <CardDescription>
-              {filteredUsers.length} usuario{filteredUsers.length !== 1 ? 's' : ''} encontrado{filteredUsers.length !== 1 ? 's' : ''}
+              {filteredUsers.length} usuario
+              {filteredUsers.length !== 1 ? "s" : ""} encontrado
+              {filteredUsers.length !== 1 ? "s" : ""}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -312,7 +379,9 @@ export default function AdminDashboardView() {
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="font-medium">{user.name}</span>
-                        <span className="text-sm text-muted-foreground">{user.email}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {user.email}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -326,10 +395,12 @@ export default function AdminDashboardView() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('es-MX') : 'Nunca'}
+                      {user.lastLogin
+                        ? new Date(user.lastLogin).toLocaleDateString("es-MX")
+                        : "Nunca"}
                     </TableCell>
                     <TableCell>
-                      {new Date(user.createdAt).toLocaleDateString('es-MX')}
+                      {new Date(user.createdAt).toLocaleDateString("es-MX")}
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
@@ -340,12 +411,14 @@ export default function AdminDashboardView() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => openEditDialog(user)}>
+                          <DropdownMenuItem
+                            onClick={() => openEditDialog(user)}
+                          >
                             <Edit className="h-4 w-4 mr-2" />
                             Editar
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => openDeleteDialog(user)}
                             className="text-destructive"
                           >
@@ -359,7 +432,10 @@ export default function AdminDashboardView() {
                 ))}
                 {filteredUsers.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    <TableCell
+                      colSpan={6}
+                      className="text-center py-8 text-muted-foreground"
+                    >
                       No se encontraron usuarios
                     </TableCell>
                   </TableRow>
@@ -376,7 +452,8 @@ export default function AdminDashboardView() {
           <DialogHeader>
             <DialogTitle>Agregar Nuevo Usuario</DialogTitle>
             <DialogDescription>
-              Complete la información del nuevo usuario. Los datos se guardarán en el sistema.
+              Complete la información del nuevo usuario. Los datos se guardarán
+              en el sistema.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -385,7 +462,9 @@ export default function AdminDashboardView() {
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Ej: Juan Pérez"
               />
             </div>
@@ -395,14 +474,21 @@ export default function AdminDashboardView() {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 placeholder="Ej: juan@example.com"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="role">Rol</Label>
-                <Select value={formData.role} onValueChange={(value: User["role"]) => setFormData({ ...formData, role: value })}>
+                <Select
+                  value={formData.role}
+                  onValueChange={(value: User["role"]) =>
+                    setFormData({ ...formData, role: value })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -415,7 +501,12 @@ export default function AdminDashboardView() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="status">Estado</Label>
-                <Select value={formData.status} onValueChange={(value: User["status"]) => setFormData({ ...formData, status: value })}>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value: User["status"]) =>
+                    setFormData({ ...formData, status: value })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -432,9 +523,7 @@ export default function AdminDashboardView() {
             <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleAddUser}>
-              Agregar Usuario
-            </Button>
+            <Button onClick={handleAddUser}>Agregar Usuario</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -454,7 +543,9 @@ export default function AdminDashboardView() {
               <Input
                 id="edit-name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
               />
             </div>
             <div className="grid gap-2">
@@ -463,13 +554,20 @@ export default function AdminDashboardView() {
                 id="edit-email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="edit-role">Rol</Label>
-                <Select value={formData.role} onValueChange={(value: User["role"]) => setFormData({ ...formData, role: value })}>
+                <Select
+                  value={formData.role}
+                  onValueChange={(value: User["role"]) =>
+                    setFormData({ ...formData, role: value })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -482,7 +580,12 @@ export default function AdminDashboardView() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="edit-status">Estado</Label>
-                <Select value={formData.status} onValueChange={(value: User["status"]) => setFormData({ ...formData, status: value })}>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value: User["status"]) =>
+                    setFormData({ ...formData, status: value })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -496,28 +599,38 @@ export default function AdminDashboardView() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditDialogOpen(false)}
+            >
               Cancelar
             </Button>
-            <Button onClick={handleEditUser}>
-              Guardar Cambios
-            </Button>
+            <Button onClick={handleEditUser}>Guardar Cambios</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Está seguro de eliminar este usuario?</AlertDialogTitle>
+            <AlertDialogTitle>
+              ¿Está seguro de eliminar este usuario?
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción no se puede deshacer. El usuario {selectedUser?.name} será eliminado permanentemente del sistema.
+              Esta acción no se puede deshacer. El usuario {selectedUser?.name}{" "}
+              será eliminado permanentemente del sistema.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteUser} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={handleDeleteUser}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
               Eliminar
             </AlertDialogAction>
           </AlertDialogFooter>

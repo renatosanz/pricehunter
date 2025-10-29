@@ -1,11 +1,11 @@
 import {
   getDashboardData,
-  type DashboardDataResponse,
+  type DashboardData,
 } from "@/services/user-service";
 import { useEffect, useState } from "react";
 
 export default function useFetchDashboardData() {
-  const [dashboardData, setDashboardData] = useState<DashboardDataResponse>();
+  const [dashboardData, setDashboardData] = useState<DashboardData>();
   const [newWeekTrackers, setNewWeekTrackers] = useState<number>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 

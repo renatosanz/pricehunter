@@ -109,7 +109,7 @@ export const updateUser = async (data: {
   }
 };
 
-export interface DashboardDataResponse {
+export interface DashboardData {
   success: boolean;
   trackersCount: number;
   nofificationCount: number;
@@ -121,13 +121,13 @@ export interface DashboardDataResponse {
 }
 
 export const getDashboardData = (): Promise<
-  DashboardDataResponse | undefined
+  DashboardData | undefined
 > => {
   return axios
-    .get<DashboardDataResponse>(`${environment.url_api}/user/dashboard`, {
+    .get<DashboardData>(`${environment.url_api}/user/dashboard`, {
       withCredentials: true,
     })
-    .then((res): DashboardDataResponse => res.data)
+    .then((res): DashboardData => res.data)
     .catch(() => {
       console.log("Error al obtener datos de dashboard.");
       return undefined;
