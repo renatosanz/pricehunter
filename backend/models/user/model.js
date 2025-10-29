@@ -46,6 +46,9 @@ export const User = db.define(
         min: 8,
       },
     },
+    lastLoggin: {
+      type: DataTypes.DATE,
+    },
   },
   {
     tableName: "user",

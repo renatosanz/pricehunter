@@ -34,7 +34,7 @@ export default function NewTrackerPage() {
                   <BadgeQuestionMark></BadgeQuestionMark>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Ecommerce soportados: Mercado Libre, Amazon, Aliexpress</p>
+                  <p>Ecommerce soportados: Mercado Libre, Amazon, Coppel</p>
                 </TooltipContent>
               </Tooltip>
             </CardDescription>

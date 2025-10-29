@@ -1,3 +1,5 @@
+import { Op } from "sequelize";
+import { Tracker } from "../tracker/model.js";
 import { User } from "./model.js";
 import bcrypt from "bcrypt";
 
@@ -89,6 +91,45 @@ export const updateUser = async (req, res) => {
         phone: user.phone,
         email: user.email,
       },
+    });
+  } catch (error) {
+    console.error("Error al obtener informacion del usuario:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener informacion del usuario",
+    });
+  }
+};
+
+/**
+ * obtener datos para el dashboard principal del usuario
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ */
+export const getDashboardData = async (req, res) => {
+  try {
+    const [trackersCount = 0, latestTrackers = [], nofificationCount = 0] =
+      await Promise.all([
+        Tracker.count({ where: { user_id: req.user.id } }),
+        Tracker.findAll({
+          where: { user_id: req.user.id },
+          attributes: ["name", "id", "createdAt"],
+          order: [["createdAt", "DESC"]],
+          limit: 4,
+        }),
+        Tracker.count({
+          where: {
+            user_id: req.user.id,
+            [Op.or]: [{ sms_enabled: true }, { email_enabled: true }],
+          },
+        }),
+      ]);
+
+    return res.status(200).json({
+      success: true,
+      trackersCount,
+      nofificationCount,
+      latestTrackers,
     });
   } catch (error) {
     console.error("Error al obtener informacion del usuario:", error);

@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { isAuthenticated, userLogin, userLogOut } from "./auth.js";
-import { getUserData, registerUser, updateUser } from "./controller.js";
+import {
+  getDashboardData,
+  getUserData,
+  registerUser,
+  updateUser,
+} from "./controller.js";
 import {
   validateLogIn,
   validateRegister,
@@ -12,6 +17,7 @@ router.post("/register", validateRegister, registerUser);
 router.post("/login", validateLogIn, userLogin);
 router.get("/logout", isAuthenticated, userLogOut);
 router.patch("/", isAuthenticated, validateUpdateUser, updateUser);
+router.get("/dashboard", isAuthenticated, getDashboardData);
 
 // verificar session
 router.get("/session", isAuthenticated, getUserData);

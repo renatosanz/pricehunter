@@ -20,6 +20,6 @@ export default function useFetchAllTrackers(): Tracker[] | undefined {
   }
   useEffect(() => {
     fetchTrackerList()
-  }, [trackersData]);
+  }, []);
   return trackersData;
 }

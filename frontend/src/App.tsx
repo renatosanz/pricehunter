@@ -22,9 +22,6 @@ const TrackersPage = lazy(
 );
 const HistoryPage = lazy(() => import("./views/history/HistoryPage"));
 const Dashboard = lazy(() => import("./views/home/Dashboard"));
-const NotificactionsPage = lazy(
-  () => import("./views/notifications/NotificactionsPage")
-);
 const NewTrackerPage = lazy(
   () => import("./views/trackers/newTracker/NewTrackerPage")
 );
@@ -49,10 +46,6 @@ function App() {
                     <Route path="history" element={<HistoryPage />} />
                     <Route path="trackers" element={<TrackersPage />} />
                     <Route path="trackers/:id" element={<DetailsTracker />} />
-                    <Route
-                      path="notifications"
-                      element={<NotificactionsPage />}
-                    />
                     <Route path="new-tracker" element={<NewTrackerPage />} />
                     <Route path="settings" element={<SettingsPage />} />
                     <Route path="admin" element={<AdminLayout />}>

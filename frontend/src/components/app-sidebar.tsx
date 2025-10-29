@@ -35,10 +35,6 @@ const data = {
       title: "Historial",
       url: "/home/history",
     },
-    {
-      title: "Notificaciones",
-      url: "/home/notifications",
-    },
   ],
   navSecondary: [
     {
@@ -107,7 +103,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuButton asChild>
                   <Link
                     to={item.url}
-                    className={`font-medium ${item.url === location.pathname ? "bg-primary/30" : ""}`}
+                    className={`font-medium ${
+                      item.url === location.pathname ? "bg-primary/30" : ""
+                    }`}
                   >
                     {item.title}
                   </Link>
@@ -120,7 +118,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenuButton asChild>
                     <Link
                       to={item.url}
-                      className={`font-medium ${item.url === location.pathname ? "bg-primary/30" : ""}`}
+                      className={`font-medium ${
+                        item.url === location.pathname ? "bg-primary/30" : ""
+                      }`}
                     >
                       {item.title}
                     </Link>

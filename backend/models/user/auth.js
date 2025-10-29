@@ -96,8 +96,9 @@ export const userLogin = async (req, res) => {
       process.env.SEED_AUTENTICACION || "",
       { expiresIn: process.env.CADUCIDAD_TOKEN },
     );
-
-    res
+    user_db.lastLoggin = new Date();
+    await user_db.save();
+    return res
       .cookie("access_token", token, {
         maxAge: 86400000,
         httpOnly: true,
@@ -107,7 +108,7 @@ export const userLogin = async (req, res) => {
       .json({ success: true });
   } catch (error) {
     console.error("Error al iniciar sesion:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Algo salio mal.",
     });
