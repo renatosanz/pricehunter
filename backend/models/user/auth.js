@@ -78,7 +78,7 @@ export const userLogin = async (req, res) => {
       process.env.SEED_AUTENTICACION || "",
       { expiresIn: process.env.CADUCIDAD_TOKEN }
     );
-    user_db.lastLoggin = new Date();
+    user_db.lastLogin = new Date();
     user_db.isLogged = true;
     await user_db.save();
     return res

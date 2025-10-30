@@ -19,19 +19,15 @@ export default function SessionLayout() {
 
     if (isUserLogged()) {
       verifyUserSession().then((response) => {
-        if (!response) {
-          exitApp();
+        if (!response || !response?.success) {
+          return exitApp();
         }
 
-        if (response?.success) {
-          setUser(response.user);
-          toast(`Bienvenido ${response.user.name}`, {
-            description: "Inicio de sesion verificado",
-            icon: <SmileIcon />,
-          });
-        } else {
-          exitApp();
-        }
+        setUser(response.user);
+        toast(`Bienvenido ${response.user.name}`, {
+          description: "Inicio de sesion verificado",
+          icon: <SmileIcon />,
+        });
       });
     } else {
       exitApp();

@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 
 import { columns } from "./columns";
-import { DataTable } from "./data-table";
+import { DataTable } from "./TrackersTable";
 import useFetchAllTrackers from "@/hooks/useFetchAllTrackes";
 
 export default function TrackersPage() {
