@@ -2,8 +2,10 @@ import { readFile } from "fs/promises";
 
 const sopported_domains = [
   "articulo.mercadolibre.com.mx",
+  "www.mercadolibre.com.mx",
   "www.amazon.com.mx",
-  "es.aliexpress.com",
+  "www.coppel.com",
+  "www.liverpool.com.mx",
 ];
 
 export function verifyDomainLink(url_string) {
@@ -15,7 +17,7 @@ export function verifyDomainLink(url_string) {
 export async function getHistoryData(id) {
   try {
     const historyData = JSON.parse(
-      await readFile(`trackers/${id}.json`, "utf8"),
+      await readFile(`trackers/${id}.json`, "utf8")
     );
     return historyData;
   } catch (error) {

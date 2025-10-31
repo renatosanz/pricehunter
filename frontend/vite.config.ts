@@ -5,7 +5,7 @@ import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  server:{allowedHosts:["floppy-jars-stay.loca.lt"]},
+  server:{allowedHosts:["joesph-unalleviating-unalterably.ngrok-free.dev"]},
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

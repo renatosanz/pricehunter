@@ -4,22 +4,22 @@ import { useEffect, useState } from "react";
 
 /**
  * Hook para obtiener el listado de todos los trackers
- * @returns { Tracker[] | undefined }
+ * @returns { Tracker[] }
  */
-export default function useFetchAllTrackers(): Tracker[] | undefined {
-  const [trackersData, setTrackersData] = useState<Tracker[] | undefined>([]);
+export default function useFetchAllTrackers(): {
+  trackersData: Tracker[];
+  fetchTrackerList: () => void;
+} {
+  const [trackersData, setTrackersData] = useState<Tracker[]>([]);
   const fetchTrackerList = () => {
     getAllTrackers().then((res) => {
       if (res?.success) {
         setTrackersData(res.trackers);
-      } else {
-        setTrackersData(undefined);
       }
-    }
-    );
-  }
+    });
+  };
   useEffect(() => {
-    fetchTrackerList()
+    fetchTrackerList();
   }, []);
-  return trackersData;
+  return { trackersData, fetchTrackerList };
 }

@@ -60,8 +60,14 @@ export default function DetailsTracker() {
           }, 500);
         });
     }
-    return () => { };
   }, []);
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("es-MX", {
+      style: "currency",
+      currency: "MXN",
+    }).format(price);
+  };
 
   return (
     <ContentLayout title={"Detalles del Rastreador"}>
@@ -104,10 +110,14 @@ export default function DetailsTracker() {
         <div className="bg-muted/50 h-[45dvh] flex flex-col gap-3 p-5 flex-1 rounded-xl lg:min-w-[30%] lg:h-full">
           {details && !isLoading ? (
             <>
-              <h2>
+              <h3>
                 Precio Actual:{" "}
-                <span className="bg-sidebar-ring p-2 rounded-xl">${historyData?.history ? historyData?.history.at(-1)?.price.toString() : "???"}</span>
-              </h2>
+                <span className="bg-sidebar-ring p-2 rounded-xl">
+                  {historyData?.history
+                    ? formatPrice(historyData?.history.at(-1)?.price ?? 0)
+                    : "???"}
+                </span>
+              </h3>
               <h3>Información</h3>
               <div className="flex flex-wrap gap-2">
                 <p className="tracking-tight w-full">General</p>

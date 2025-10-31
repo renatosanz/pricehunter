@@ -44,7 +44,7 @@ export const registerUser = async (req, res) => {
 export const getUserData = async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
-      attributes: ["name", "email", "role", "phone"],
+      attributes: ["name", "email", "role", "phone", "id"],
     });
     if (!user) {
       return res.status(404).json({

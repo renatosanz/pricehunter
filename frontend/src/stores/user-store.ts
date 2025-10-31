@@ -5,6 +5,7 @@ export interface UserI {
   email: string;
   role: string;
   phone: string;
+  id: number;
 }
 
 interface AppI {
@@ -13,7 +14,7 @@ interface AppI {
 }
 
 export const useUserStore = create<AppI>((set) => ({
-  user: { name: " ", email: " ", role: "user", phone: " " },
+  user: { id: 0, name: " ", email: " ", role: "user", phone: " " },
   setUser: (user: UserI) => {
     set({
       user: user,

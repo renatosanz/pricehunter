@@ -72,18 +72,9 @@ export const getUsersDataTable = async (req, res) => {
         limit,
         offset,
         where: {
-          [Op.or]: [
-            {
-              email: {
-                [Op.like]: `%${search}%`,
-              },
-            },
-            {
-              name: {
-                [Op.like]: `%${search}%`,
-              },
-            },
-          ],
+          email: {
+            [Op.like]: `%${search}%`,
+          },
         },
         attributes: { exclude: ["password"] },
         order: [["createdAt", "DESC"]],
@@ -111,20 +102,75 @@ export const getUsersDataTable = async (req, res) => {
   }
 };
 
-export const searchUser = async (req, res) => {
+/**
+ * Crear nuevo usuario o administrador
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ */
+export const createUser = async (req, res) => {
   try {
-    return res.status(200).json({
-      success: true,
-      usersCount,
-      adminsCount,
-      bannedUsers,
-      activeUsers,
+    const userData = req.body;
+    if (await User.findOne({ where: { email: userData.email } })) {
+      return res.json({
+        success: false,
+        message: "Email ya en uso. Usa un email diferente o inicia sesion.",
+      });
+    }
+    bcrypt.genSalt(10, function (err, salt) {
+      bcrypt.hash(req.body.password, salt, async (err, hash) => {
+        await User.create({ ...userData, password: hash });
+        const okMessage = `${userData.role == "user" ? "Usuario" : "Admin"} ${
+          userData.name
+        } creado correctamente`;
+        return res.status(200).json({
+          success: true,
+          message: okMessage,
+        });
+      });
     });
   } catch (error) {
     console.error("Error al obtener dashboard de admin:", error);
     return res.status(500).json({
       success: false,
       message: "Error al obtener dashboard de admin",
+    });
+  }
+};
+
+/**
+ * Eliminar usuario por su ID
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ */
+export const deleteUser = async (req, res) => {
+  const { id } = req.params;
+  if (!id || isNaN(parseInt(id))) {
+    return res.status(404).json({
+      success: false,
+      message: "ID de usuario inválido",
+    });
+  }
+
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Usuario no encontrado.",
+      });
+    }
+
+    const okMessage = `Usuario ${user.name} eliminado correctamente`;
+    await user.destroy();
+    return res.status(200).json({
+      success: true,
+      message: okMessage,
+    });
+  } catch (error) {
+    console.error("Error: ", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error al eliminar rastreador",
     });
   }
 };

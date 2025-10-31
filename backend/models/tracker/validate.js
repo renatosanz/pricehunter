@@ -22,3 +22,21 @@ export const validateNewTracker = async (req, res, next) => {
   }
   next();
 };
+
+/**
+ * Middleware de validacion para restablecer un rastreador
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
+export const validateRestoreTracker = async (req, res, next) => {
+  const schema = Joi.object({
+    id: Joi.number().min(0).required(),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+  next();
+};

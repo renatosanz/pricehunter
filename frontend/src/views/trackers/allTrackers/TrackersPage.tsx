@@ -1,23 +1,9 @@
 import ContentLayout from "@/layouts/ContentLayout";
-import { AsteriskIcon, Bell, Search, TrendingDown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { toast } from "sonner";
-
-import { columns } from "./columns";
 import { DataTable } from "./TrackersTable";
-import useFetchAllTrackers from "@/hooks/useFetchAllTrackes";
+import { Bell, Search, TrendingDown } from "lucide-react";
 
 export default function TrackersPage() {
-  const trackersData = useFetchAllTrackers();
-  if (trackersData === undefined) {
-    toast("Ha ocurrido un error", {
-      description: "Error al obtener todos los rastreadores",
-      position: "bottom-center",
-      duration: 2000,
-      icon: <AsteriskIcon />,
-    });
-  }
-
   return (
     <ContentLayout title="Rastreadores">
       <h1 className="text-xlscroll-m-20 text-3xl font-extrabold tracking-tight text-balance">
@@ -67,10 +53,7 @@ export default function TrackersPage() {
           </Card>
         </div>
         <div className="bg-muted/50 flex-1 rounded-xl min-h-min">
-          <DataTable
-            columns={columns}
-            data={trackersData ? trackersData : []}
-          />
+          <DataTable />
         </div>
       </div>
     </ContentLayout>

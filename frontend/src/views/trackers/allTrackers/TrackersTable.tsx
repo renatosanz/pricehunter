@@ -13,18 +13,112 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { AsteriskIcon, LinkIcon, TrashIcon } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { DeleteTrackerModal } from "@/modals/DeleteTrackerModal";
+import type { Tracker } from "./columns";
+import useFetchAllTrackers from "@/hooks/useFetchAllTrackes";
+import { toast } from "sonner";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
+export function DataTable() {
+  // obtener los datos de la tabla
+  const { trackersData, fetchTrackerList } = useFetchAllTrackers();
+  if (trackersData === undefined) {
+    toast("Ha ocurrido un error", {
+      description: "Error al obtener todos los rastreadores",
+      position: "bottom-center",
+      duration: 2000,
+      icon: <AsteriskIcon />,
+    });
+  }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
-  const table = useReactTable({
-    data,
+  // declaracion de columnas de la tabla
+  const columns: ColumnDef<Tracker, Tracker>[] = [
+    {
+      accessorKey: "name",
+      header: "Nombre",
+      cell: ({ row }) => {
+        const name: string = row.getValue("name");
+        const trackerId: number = row.original.id;
+        return (
+          <Link to={`${trackerId}`}>
+            <Tooltip>
+              <TooltipTrigger>
+                <p className="cursor-pointer underline overflow-hidden max-w-[40vw] text-ellipsis">
+                  {name}
+                </p>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Ver Detalles</p>
+              </TooltipContent>
+            </Tooltip>
+          </Link>
+        );
+      },
+    },
+    {
+      accessorKey: "link",
+      header: "Acciones",
+      cell: ({ row }) => (
+        <div className="flex gap-4">
+          <a target="_blank" className="flex gap-4" href={row.getValue("link")}>
+            <Tooltip>
+              <TooltipTrigger>
+                <LinkIcon className="cursor-pointer" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Vistar en tienda</p>
+              </TooltipContent>
+            </Tooltip>
+          </a>
+          <DeleteTrackerModal
+            name={row.original.name}
+            id={row.original.id}
+            callback={fetchTrackerList}
+          >
+            <Button
+              className="cursor-pointer"
+              size="icon"
+              variant={"destructive"}
+            >
+              <TrashIcon />
+            </Button>
+          </DeleteTrackerModal>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "active",
+      header: "Estatus",
+      cell: ({ row }) => {
+        const status = row.getValue("active");
+        return status ? <Badge>Activo</Badge> : <Badge>Inactivo</Badge>;
+      },
+    },
+    {
+      accessorKey: "traceInterval",
+      header: "Intervalo de Rastreo",
+      cell: ({ row }) => {
+        const intervalMinutes = row.original.traceInterval;
+        const intervalFormatted =
+          intervalMinutes >= 60
+            ? `Cada ${Math.floor(intervalMinutes / 60)} hr(s)`
+            : `Cada ${intervalMinutes} min(s)`;
+        return <Badge variant={"secondary"}>{intervalFormatted}</Badge>;
+      },
+    },
+  ];
+
+  // crear la tabla con los datos
+  const table = useReactTable<Tracker>({
+    data: trackersData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });

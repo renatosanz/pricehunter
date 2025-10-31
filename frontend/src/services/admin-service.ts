@@ -78,3 +78,52 @@ export const getUserDataTable = (
       };
     });
 };
+
+interface NewUserByAdmin {
+  success: boolean;
+  message?: string;
+}
+
+export const createUser = (userdata: {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  password_validate: string;
+  role: string;
+}) => {
+  return axios
+    .post<NewUserByAdmin>(
+      `${environment.url_api}/admin/create-user`,
+      { ...userdata },
+      {
+        withCredentials: true,
+      }
+    )
+    .then((res): NewUserByAdmin => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.log("Error al crear usuario por admin.", err);
+      return;
+    });
+};
+
+interface DeleteUserData {
+  success: boolean;
+  message?: string;
+}
+
+export const deleteUser = (id: number) => {
+  return axios
+    .delete<DeleteUserData>(`${environment.url_api}/admin/delete-user/${id}`, {
+      withCredentials: true,
+    })
+    .then((res): DeleteUserData => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.log("Error al eliminiar usuario por admin.", err);
+      return;
+    });
+};

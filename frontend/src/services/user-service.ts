@@ -120,9 +120,7 @@ export interface DashboardData {
   }[];
 }
 
-export const getDashboardData = (): Promise<
-  DashboardData | undefined
-> => {
+export const getDashboardData = (): Promise<DashboardData | undefined> => {
   return axios
     .get<DashboardData>(`${environment.url_api}/user/dashboard`, {
       withCredentials: true,

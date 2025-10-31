@@ -177,7 +177,7 @@ export const deleteTracker = async (req, res) => {
 };
 
 /**
- * Obtener todos los trackers de un usuario
+ * Obtener todos los trackers eliminados de un usuario
  * @param {import('express').Request & { user?: any }} req
  * @param {import('express').Response} res
  */
@@ -206,6 +206,38 @@ export const historyTrackers = async (req, res) => {
     return res.status(200).json({
       success: true,
       trackers,
+    });
+  } catch (error) {
+    console.error("Error: ", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener todos los rastreadores",
+    });
+  }
+};
+
+/**
+ * Reactivar rastreador por medio de su id
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ */
+export const restoreTracker = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const tracker = await Tracker.findByPk(id, {
+      attributes: [
+        "name",
+        "id",
+        "link",
+        "traceInterval",
+        "active",
+        "target_price",
+      ],
+      paranoid: false,
+    });
+    await tracker.restore();
+    return res.status(200).json({
+      success: true,
     });
   } catch (error) {
     console.error("Error: ", error.message);

@@ -1,0 +1,3 @@
+INSERT INTO tracker ( user_id, name, link, platform, image, traceInterval, active, sms_enabled, email_enabled, createdAt, updatedAt ) VALUES(5, 'Decoración Inflable Con Forma De Esqueleto De Hello Kitty Con Diseño De Gemmy Airblown - Venta Internacional.', 'https://www.coppel.com/pdp/decoracion-inflable-con-forma-de-esqueleto-de-hello-kitty-con-diseno-de-gemmy-airblown-venta-internacional-mkp-95371212', 'Coppel', NULL, 1, 1, 0, 1, datetime('now'), datetime('now') );
+
+

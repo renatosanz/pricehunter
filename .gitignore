@@ -1,7 +1,7 @@
 # This file tells Git which files shouldn't be added to source control
 
 backend/node_modules
-backend/db.sqlite
+backend/*.sqlite
 backend/.env
 backend/trackers
 
@@ -11,3 +11,8 @@ frontend/dist
 scrapper/node_modules
 scrapper/storage
 scrapper/.idea
+scrapper/deps
+scrapper/db.sqlite
+scrapper/products/*.json
+__pycache__
+

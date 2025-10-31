@@ -20,7 +20,7 @@ app.use(
     origin: "http://localhost:5173",
     credentials: true, // permitir las server side cookies2
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 app.use(cookieParser());
 app.use(express.json());

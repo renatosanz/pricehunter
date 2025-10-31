@@ -19,10 +19,12 @@ export function DeleteTrackerModal({
   children,
   id,
   name,
+  callback,
 }: {
   children: any;
   name: string;
   id: number;
+  callback: () => void;
 }) {
   const { isDeleting, error, deleteItem } = useDelete(deleteTracker);
 
@@ -34,7 +36,8 @@ export function DeleteTrackerModal({
         icon: <AsteriskIcon />,
       });
     }
-    return toast.success("Rastreador eliminado");
+    toast.success("Rastreador eliminado");
+    return callback();
   };
 
   return (

@@ -43,134 +43,6 @@ import { useState } from "react";
 import DeleteUserModal from "./DeleteUserModal";
 import EditUserModal from "./EditUserModal";
 
-export const columns: ColumnDef<User>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "name",
-    header: "Usuario",
-    cell: ({ row }) => (
-      <div className="flex flex-col">
-        <span className="font-medium">{row.getValue("name")}</span>
-        <span className="text-sm text-muted-foreground">
-          {row.original.email}
-        </span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "role",
-    header: "Role",
-    cell: ({ row }) => (
-      <Badge variant={"default"}>{row.getValue("role")}</Badge>
-    ),
-  },
-  {
-    accessorKey: "Status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div>
-        {row.original.isBanned ? (
-          <Badge variant={"destructive"}>Suspendido</Badge>
-        ) : row.original.isLogged ? (
-          <Badge variant={"default"}>Activo</Badge>
-        ) : (
-          <Badge variant={"outline"}>Inactivo</Badge>
-        )}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "lastLogin",
-    header: "Ultimo Acceso",
-    cell: ({ row }) => (
-      <div>
-        {row.getValue("lastLogin")
-          ? new Date(row.getValue("lastLogin")).toLocaleDateString("es-MX")
-          : "Nunca"}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Fecha de Creacion",
-    cell: ({ row }) => (
-      <div>
-        {row.getValue("createdAt")
-          ? new Date(row.getValue("createdAt")).toLocaleDateString("es-MX")
-          : "Nunca"}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "phone",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Telefono
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => row.getValue("phone"),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const { id, name } = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <EditUserModal>
-              <Button variant={"outline"}>
-                <Edit className="h-4 w-4 mr-2" />
-                Editar
-              </Button>
-            </EditUserModal>
-            <DropdownMenuSeparator />
-            <DeleteUserModal id={id} name={name}>
-              <Button variant={"destructive"}>
-                <Trash2 className="h-4 w-4 mr-2" />
-                Eliminar
-              </Button>
-            </DeleteUserModal>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
-
 export default function UsersDataTable() {
   const {
     usersData,
@@ -185,6 +57,134 @@ export default function UsersDataTable() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+
+  const columns: ColumnDef<User>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "name",
+      header: "Usuario",
+      cell: ({ row }) => (
+        <div className="flex flex-col">
+          <span className="font-medium">{row.getValue("name")}</span>
+          <span className="text-sm text-muted-foreground">
+            {row.original.email}
+          </span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "role",
+      header: "Role",
+      cell: ({ row }) => (
+        <Badge variant={"default"}>{row.getValue("role")}</Badge>
+      ),
+    },
+    {
+      accessorKey: "Status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div>
+          {row.original.isBanned ? (
+            <Badge variant={"destructive"}>Suspendido</Badge>
+          ) : row.original.isLogged ? (
+            <Badge variant={"default"}>Activo</Badge>
+          ) : (
+            <Badge variant={"outline"}>Inactivo</Badge>
+          )}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "lastLogin",
+      header: "Ultimo Acceso",
+      cell: ({ row }) => (
+        <div>
+          {row.getValue("lastLogin")
+            ? new Date(row.getValue("lastLogin")).toLocaleDateString("es-MX")
+            : "Nunca"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Fecha de Creacion",
+      cell: ({ row }) => (
+        <div>
+          {row.getValue("createdAt")
+            ? new Date(row.getValue("createdAt")).toLocaleDateString("es-MX")
+            : "Nunca"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Telefono
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => row.getValue("phone"),
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const { id, name } = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+              <EditUserModal>
+                <Button variant={"outline"}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Editar
+                </Button>
+              </EditUserModal>
+              <DropdownMenuSeparator />
+              <DeleteUserModal id={id} name={name}>
+                <Button variant={"destructive"}>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Eliminar
+                </Button>
+              </DeleteUserModal>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
 
   const table = useReactTable({
     data,
@@ -303,7 +303,7 @@ function UserSearchBar({
       <div className=" w-full relative">
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Buscar por nombre o email..."
+          placeholder="Buscar por email..."
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-8"
         />
