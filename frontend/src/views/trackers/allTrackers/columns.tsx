@@ -27,15 +27,15 @@ export type Tracker = {
 };
 
 export interface PriceHistory {
-  id: number
-  name: string
-  site: string
-  history: History[]
+  id: number;
+  name: string;
+  site: string;
+  history: History[];
 }
 
 export interface History {
-  price: number
-  timestamp: string
+  price: number;
+  timestamp: string;
 }
 
 export const columns: ColumnDef<Tracker>[] = [
@@ -76,7 +76,11 @@ export const columns: ColumnDef<Tracker>[] = [
             </TooltipContent>
           </Tooltip>
         </a>
-        <DeleteTrackerModal name={row.original.name} id={row.original.id}>
+        <DeleteTrackerModal
+          name={row.original.name}
+          id={row.original.id}
+          callback={() => {}}
+        >
           <Button
             className="cursor-pointer"
             size="icon"

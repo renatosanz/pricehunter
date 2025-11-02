@@ -4,9 +4,11 @@ import { Toaster } from "./components/ui/sonner";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { lazy, Suspense } from "react";
 import FallbackPage from "./views/fallback/Fallback";
-import AdminLayout from "./layouts/AdminLayout";
-import AdminDashboardView from "./views/admin/AdminDashboardView";
 
+const AdminLayout =  lazy(()=>import("./layouts/AdminLayout"));
+const AdminDashboardView = lazy(
+  () => import("./views/admin/AdminDashboardView")
+);
 const DetailsTracker = lazy(
   () => import("./views/trackers/detailsTracker/DetailsTracker")
 );

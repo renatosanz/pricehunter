@@ -2,7 +2,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -20,7 +19,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,7 +31,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Toggle } from "@/components/ui/toggle";
-import { registerUser } from "@/services/user-service";
 import { toast } from "sonner";
 import { createUser } from "@/services/admin-service";
 

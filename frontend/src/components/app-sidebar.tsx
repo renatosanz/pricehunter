@@ -42,16 +42,6 @@ const data = {
       url: "settings",
       icon: <Settings />,
     },
-    {
-      title: "Ayuda",
-      url: "help",
-      icon: <HelpCircle />,
-    },
-    {
-      title: "Mas Información",
-      url: "about",
-      icon: <InfoIcon />,
-    },
   ],
   adminNav: [
     {

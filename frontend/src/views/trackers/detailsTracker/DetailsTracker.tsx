@@ -105,7 +105,7 @@ export default function DetailsTracker() {
               </div>
             )}
           </div>
-          <div className="bg-muted/50 min-h-[30dvh] w-full rounded-xl lg:flex-1 lg:h-full"></div>
+          
         </div>
         <div className="bg-muted/50 h-[45dvh] flex flex-col gap-3 p-5 flex-1 rounded-xl lg:min-w-[30%] lg:h-full">
           {details && !isLoading ? (

@@ -18,14 +18,14 @@ export default function useUserDataTable() {
     },
   });
 
-  const refreshData = (page: number, page_size: number, searchTerm: string) => {
+  const fetchData = (page: number, page_size: number, searchTerm: string) => {
     getUserDataTable(page, page_size, searchTerm).then((data) => {
       setUsersData(data);
     });
   };
 
   useEffect(() => {
-    refreshData(pageSize, page, debounceSearchTerm);
+    fetchData(pageSize, page, debounceSearchTerm);
   }, [pageSize, page, debounceSearchTerm]);
 
   const previousPage = () => {

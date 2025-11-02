@@ -12,10 +12,12 @@ import "./styles.css";
 import { useUserStore } from "@/stores/user-store";
 import useFetchDashboardData from "@/hooks/useFetchDashboardData";
 import { Spinner } from "../fallback/Fallback";
+import { useNavigate, type NavigateFunction } from "react-router-dom";
 
 export default function Dashboard() {
   const { user } = useUserStore();
   const { dashboardData, newWeekTrackers, isLoading } = useFetchDashboardData();
+  const navigate = useNavigate();
 
   return (
     <ContentLayout title="Dashboard">
@@ -55,7 +57,10 @@ export default function Dashboard() {
 
       {/* main grid */}
       <div className="grid auto-rows-min gap-6 md:grid-cols-2 xl:grid-cols-3">
-        <RecentActivityCard trackersList={dashboardData?.latestTrackers} />
+        <RecentActivityCard
+          trackersList={dashboardData?.latestTrackers}
+          navigate={navigate}
+        />
         <PriceAlertsCard />
       </div>
 
@@ -113,8 +118,10 @@ function StatsCard({
 
 function RecentActivityCard({
   trackersList,
+  navigate,
 }: {
   trackersList: { name: string; id: number; createdAt: string }[] | undefined;
+  navigate: NavigateFunction;
 }) {
   return (
     <Card>
@@ -146,7 +153,7 @@ function RecentActivityCard({
                     </p>
                   </div>
                 </div>
-                <Button>Ver</Button>
+                <Button onClick={() => navigate(`/home/trackers/${id}`)}>Ver</Button>
               </div>
             );
           })

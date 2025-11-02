@@ -294,10 +294,6 @@ function UserSearchBar({
   setPageSize: React.Dispatch<React.SetStateAction<number>>;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  const [roleFilter, setRoleFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-
-  const handleSearch = () => {};
   return (
     <div className="flex flex-col sm:flex-row gap-4">
       <div className=" w-full relative">
@@ -309,27 +305,6 @@ function UserSearchBar({
         />
       </div>
 
-      <Select value={roleFilter} onValueChange={setRoleFilter}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Filtrar por rol" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Todos los roles</SelectItem>
-          <SelectItem value="admin">Administrador</SelectItem>
-          <SelectItem value="user">Usuario</SelectItem>
-        </SelectContent>
-      </Select>
-      <Select value={statusFilter} onValueChange={setStatusFilter}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Filtrar por estado" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Todos los estados</SelectItem>
-          <SelectItem value="active">Activo</SelectItem>
-          <SelectItem value="inactive">Inactivo</SelectItem>
-          <SelectItem value="suspended">Suspendido</SelectItem>
-        </SelectContent>
-      </Select>
       <Select
         value={pageSize.toString()}
         onValueChange={(value) => {
@@ -345,7 +320,7 @@ function UserSearchBar({
           <SelectItem value="20">20 resultados</SelectItem>
         </SelectContent>
       </Select>
-      <Button onClick={handleSearch}>Buscar</Button>
+      
     </div>
   );
 }

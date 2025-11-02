@@ -160,6 +160,13 @@ export const deleteUser = async (req, res) => {
       });
     }
 
+    if (user.isLogged) {
+      return res.status(200).json({
+        success: false,
+        message: "Usuario con sesion activa, solo es posible eliminar usuarios con sesiones inactivas.",
+      });
+    }
+
     const okMessage = `Usuario ${user.name} eliminado correctamente`;
     await user.destroy();
     return res.status(200).json({

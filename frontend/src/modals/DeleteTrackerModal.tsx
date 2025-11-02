@@ -47,8 +47,11 @@ export function DeleteTrackerModal({
         <AlertDialogHeader>
           <AlertDialogTitle>Eliminar rastreador "{name}"</AlertDialogTitle>
           <AlertDialogDescription>
-            Esta acción no se puede deshacer. Eliminará permanentemente el
-            rastreador y eliminará los datos de nuestros servidores.
+            <p className="leading-6">
+              Al eliminar este rastreador se detendra su ejecución de nuestros
+              servidores de web scrapping, siempre puedes volver a activarlo
+              desde la pestaña de Historial
+            </p>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
