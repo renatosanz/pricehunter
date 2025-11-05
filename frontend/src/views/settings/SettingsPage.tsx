@@ -11,7 +11,6 @@ export default function SettingsPage() {
         Configuración
       </h1>
       <UserData user={user} />
-      <div className="bg-muted/50 flex-3 rounded-xl min-h-min p-4"></div>
     </ContentLayout>
   );
 }

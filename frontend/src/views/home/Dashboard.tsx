@@ -61,7 +61,6 @@ export default function Dashboard() {
           trackersList={dashboardData?.latestTrackers}
           navigate={navigate}
         />
-        <PriceAlertsCard />
       </div>
 
       {/* bottom banner */}
@@ -131,91 +130,49 @@ function RecentActivityCard({
       </CardHeader>
       <CardContent className="space-y-4">
         {trackersList ? (
-          trackersList.map(({ name, id, createdAt }) => {
-            const date = new Date(createdAt);
-            return (
-              <div
-                key={id}
-                className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-              >
-                <div className="flex items-center gap-3">
-                  <div>
-                    <Eye className="h-4 w-4" />
+          trackersList.length > 0 ? (
+            trackersList.map(({ name, id, createdAt }) => {
+              const date = new Date(createdAt);
+              return (
+                <div
+                  key={id}
+                  className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
+                >
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <Eye className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {date.toLocaleDateString("es-MX", {
+                          month: "long",
+                          hour: "2-digit",
+                          day: "numeric",
+                        })}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-sm">{name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {date.toLocaleDateString("es-MX", {
-                        month: "long",
-                        hour: "2-digit",
-                        day: "numeric",
-                      })}
-                    </p>
-                  </div>
+                  <Button onClick={() => navigate(`/home/trackers/${id}`)}>
+                    Ver
+                  </Button>
                 </div>
-                <Button onClick={() => navigate(`/home/trackers/${id}`)}>Ver</Button>
-              </div>
-            );
-          })
+              );
+            })
+          ) : (
+            <>
+              <h3 className="mb-0">Aún no hay rastreadores :(</h3>
+              <p>Disponible para productos en MercadoLibre, Amazon, Coppel y Liverpool</p>
+              <Button onClick={()=>navigate("/home/new-tracker")}>
+                Crea un nuevo rastreador
+              </Button>
+            </>
+          )
         ) : (
           <div className="flex items-center justify-between">
             <Spinner className="m-auto size-8 " />
           </div>
         )}
-      </CardContent>
-    </Card>
-  );
-}
-
-function PriceAlertsCard() {
-  const alerts = [
-    {
-      product: "PlayStation 5",
-      target: "$9,999",
-      current: "$12,499",
-      progress: 80,
-    },
-    {
-      product: "AirPods Pro",
-      target: "$3,499",
-      current: "$4,199",
-      progress: 65,
-    },
-    {
-      product: "Kindle Paperwhite",
-      target: "$1,999",
-      current: "$2,499",
-      progress: 45,
-    },
-  ];
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Alertas de Precio</CardTitle>
-        <CardDescription>Cerca de alcanzar tus objetivos</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {alerts.map((alert, index) => (
-          <div key={index} className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="font-medium">{alert.product}</span>
-              <span className="text-muted-foreground">
-                {alert.current} → {alert.target}
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-              <div
-                className="bg-green-600 h-2 rounded-full"
-                style={{ width: `${alert.progress}%` }}
-              ></div>
-            </div>
-          </div>
-        ))}
-        <Button variant="outline" className="w-full gap-2">
-          <Bell className="h-4 w-4" />
-          Gestionar Todas las Alertas
-        </Button>
       </CardContent>
     </Card>
   );
