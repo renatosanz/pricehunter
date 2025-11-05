@@ -131,3 +131,35 @@ export const restoreTrackerByID = (
       return undefined;
     });
 };
+
+export interface EditTrackerResponse {
+  success: boolean;
+  message?: string;
+  update: {
+    email_enabled: boolean;
+    sms_enabled: boolean;
+    name: string;
+    traceInterval: number;
+    target_price: number;
+  };
+}
+
+export const patchEditTracker = (
+  newtrackerData: Tracker
+): Promise<EditTrackerResponse | undefined> => {
+  const { email_enabled, id, sms_enabled, name, traceInterval, target_price } =
+    newtrackerData;
+  return axios
+    .patch<EditTrackerResponse>(
+      `${environment.url_api}/tracker/${id}`,
+      { email_enabled, sms_enabled, name, traceInterval, target_price },
+      {
+        withCredentials: true,
+      }
+    )
+    .then((res): EditTrackerResponse => res.data)
+    .catch(() => {
+      console.log("Error al obtener datos de dashboard.");
+      return undefined;
+    });
+};

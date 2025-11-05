@@ -1,5 +1,8 @@
 import ContentLayout from "@/layouts/ContentLayout";
-import { getTrackerDetails } from "@/services/tracker-service";
+import {
+  getTrackerDetails,
+  patchEditTracker,
+} from "@/services/tracker-service";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { PriceHistory, Tracker } from "../allTrackers/columns";
@@ -12,6 +15,7 @@ import {
   PenSquareIcon,
   Save,
   ShoppingBasket,
+  Smile,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -23,14 +27,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { filterInputNumbers } from "@/lib/utils";
 
 export default function DetailsTracker() {
   const { id } = useParams();
-  const [details, setDetails] = useState<Tracker>();
+  const [tracker, setTracker] = useState<Tracker>();
   const [historyData, setHistoryData] = useState<PriceHistory>();
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
+
+  const editTracker = (key: string, value: any) => {
+    if (!isEditing) setIsEditing(true);
+
+    const targetTracker = tracker || tracker;
+    if (!targetTracker) return;
+
+    setTracker({ ...targetTracker, [key]: value });
+  };
+
   const formatter = new Intl.DateTimeFormat("es-MX", {
     year: "numeric",
     month: "2-digit",
@@ -51,7 +66,7 @@ export default function DetailsTracker() {
             });
             return;
           }
-          setDetails(res?.tracker);
+          setTracker(res?.tracker);
           setHistoryData(res?.price_history);
         })
         .finally(() => {
@@ -69,6 +84,52 @@ export default function DetailsTracker() {
     }).format(price);
   };
 
+  const handleEditTargetPrice = (value: string) => {
+    if (value.length < 10) {
+      editTracker("target_price", parseInt(value));
+    }
+  };
+
+  const handleEditTracker = () => {
+    if (!tracker) {
+      return toast("Ha ocurrido un error", {
+        description: "Error actualizando rastreador",
+        position: "bottom-center",
+        duration: 2000,
+        icon: <AsteriskIcon />,
+      });
+    }
+
+    setIsEditing(false);
+    patchEditTracker(tracker).then((res) => {
+      if (!res?.success) {
+        return toast("Ha ocurrido un error", {
+          description: res?.message ?? "Error actualizando rastreador",
+          position: "bottom-center",
+          duration: 2000,
+          icon: <AsteriskIcon />,
+        });
+      }
+
+      const { email_enabled, sms_enabled, name, traceInterval, target_price } =
+        res.update;
+      setTracker({
+        ...tracker,
+        email_enabled,
+        sms_enabled,
+        name,
+        traceInterval,
+        target_price,
+      });
+      return toast("Edición Exitósa", {
+        description: "Los datos del rastreador se han actualizado",
+        position: "bottom-center",
+        duration: 2000,
+        icon: <Smile />,
+      });
+    });
+  };
+
   return (
     <ContentLayout title={"Detalles del Rastreador"}>
       {isLoading ? (
@@ -77,17 +138,20 @@ export default function DetailsTracker() {
         <div className="flex flex-row gap-4">
           {!isEditing ? (
             <>
-              <h2>{details?.name}</h2>
+              <h2>{tracker?.name}</h2>
               <Button onClick={() => setIsEditing(true)} variant={"secondary"}>
                 <PenSquareIcon />
               </Button>
             </>
           ) : (
             <>
-              <Input className="max-w-fit" defaultValue={details?.name} />
-              <Button variant={"secondary"} onClick={() => setIsEditing(false)}>
-                <Save />
-              </Button>
+              <Input
+                className="max-w-fit"
+                defaultValue={tracker?.name}
+                onChange={(event) => {
+                  editTracker("name", event.target.value);
+                }}
+              />
             </>
           )}
         </div>
@@ -105,39 +169,57 @@ export default function DetailsTracker() {
               </div>
             )}
           </div>
-          
         </div>
         <div className="bg-muted/50 h-[45dvh] flex flex-col gap-3 p-5 flex-1 rounded-xl lg:min-w-[30%] lg:h-full">
-          {details && !isLoading ? (
+          {tracker && !isLoading ? (
             <>
-              <h3>
-                Precio Actual:{" "}
-                <span className="bg-sidebar-ring p-2 rounded-xl">
-                  {historyData?.history
-                    ? formatPrice(historyData?.history.at(-1)?.price ?? 0)
-                    : "???"}
-                </span>
-              </h3>
+              <div>
+                <h3 className="mb-0">
+                  Precio Actual:{" "}
+                  <span className="bg-sidebar-ring p-2 rounded-xl">
+                    {historyData?.history
+                      ? formatPrice(historyData?.history.at(-1)?.price ?? 0)
+                      : "???"}
+                  </span>
+                </h3>
+
+                {!isEditing ? (
+                  <p>{formatPrice(tracker?.target_price)}</p>
+                ) : (
+                  <div className="relative w-full">
+                    <Input
+                      type="text"
+                      placeholder="Precio Meta"
+                      defaultValue={tracker.target_price}
+                      maxLength={7}
+                      onKeyDown={filterInputNumbers}
+                      onChange={(event) =>
+                        handleEditTargetPrice(event.target.value)
+                      }
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm">
+                      MXN
+                    </span>
+                  </div>
+                )}
+              </div>
+
               <h3>Información</h3>
               <div className="flex flex-wrap gap-2">
                 <p className="tracking-tight w-full">General</p>
-                <div className="text-sm flex flex-row bg-ring rounded-xl px-2 max-w-fit gap-2">
-                  <p>{details.active ? "Activo" : "Inactivo"}</p>
-                  <Switch checked={details.active} className="m-auto" />
-                </div>
                 <p className=" text-sm bg-ring rounded-xl px-2 max-w-fit">
                   Creado el{" "}
                   {formatter
-                    .format(new Date(details?.createdAt))
+                    .format(new Date(tracker?.createdAt))
                     .toLocaleLowerCase("es-MX")}
                 </p>
                 <p className=" text-sm bg-ring rounded-xl px-2 max-w-fit">
                   Ultima edición el{" "}
                   {formatter
-                    .format(new Date(details?.updatedAt))
+                    .format(new Date(tracker?.updatedAt))
                     .toLocaleLowerCase("es-MX")}
                 </p>
-                <a href={details.link} target="_blank">
+                <a href={tracker.link} target="_blank">
                   <Button>
                     Visitar Publicación <ShoppingBasket />
                   </Button>
@@ -147,13 +229,31 @@ export default function DetailsTracker() {
                 <p className="tracking-tight w-full">Notificaciones</p>
                 <div className="text-sm flex flex-row bg-ring rounded-xl px-2 max-w-fit gap-2">
                   <p className="my-auto">SMS</p>
-                  <Switch className="my-auto" checked={details.sms_enabled} />
+                  <Switch
+                    className="my-auto"
+                    defaultChecked={tracker.sms_enabled}
+                    onClick={() =>
+                      editTracker("sms_enabled", tracker.sms_enabled)
+                    }
+                  />
                 </div>
                 <div className="text-sm flex flex-row bg-ring rounded-xl px-2 max-w-fit gap-2">
                   <p className="my-auto">Email</p>
-                  <Switch className="my-auto" checked={details.email_enabled} />
+                  <Switch
+                    className="my-auto"
+                    defaultChecked={tracker.email_enabled}
+                    onClick={() =>
+                      editTracker("email_enabled", tracker.email_enabled)
+                    }
+                  />
                 </div>
-                <Select required value={details.traceInterval.toString()}>
+                <Select
+                  required
+                  defaultValue={tracker.traceInterval.toString()}
+                  onValueChange={(val) => {
+                    editTracker("traceInterval", parseInt(val));
+                  }}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecciona un lapso" />
                   </SelectTrigger>
@@ -166,7 +266,12 @@ export default function DetailsTracker() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button>Guardar Cambios</Button>
+              {isEditing && (
+                <Button disabled={!isEditing} onClick={handleEditTracker}>
+                  Guardar Cambios
+                  <Save />
+                </Button>
+              )}
             </>
           ) : (
             <SideDetailsSkeleton />

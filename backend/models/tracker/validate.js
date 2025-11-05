@@ -40,3 +40,26 @@ export const validateRestoreTracker = async (req, res, next) => {
   }
   next();
 };
+
+
+/**
+ * Middleware de validacion para el registro de usuarios
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
+export const validateEditTracker = async (req, res, next) => {
+  const schema = Joi.object({
+    name: Joi.string().min(5).max(64),
+    sms_enabled: Joi.boolean(),
+    email_enabled: Joi.boolean(),
+    traceInterval: Joi.number().min(0).max(1440),
+    target_price: Joi.number().min(0).max(999999),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+  next();
+};

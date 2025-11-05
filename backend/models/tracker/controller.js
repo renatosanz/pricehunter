@@ -247,3 +247,51 @@ export const restoreTracker = async (req, res) => {
     });
   }
 };
+
+/**
+ * Editar datos de un rastreador
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ */
+export const editTracker = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id || isNaN(parseInt(id))) {
+      return res.status(400).json({
+        success: false,
+        message: "ID de rastreador inválido",
+      });
+    }
+
+    const { email_enabled, sms_enabled, name, traceInterval, target_price } =
+      req.body;
+
+    const tracker = await Tracker.findByPk(id, {
+      attributes: [
+        "name",
+        "id",
+        "link",
+        "traceInterval",
+        "active",
+        "target_price",
+      ],
+    });
+    await tracker.update({
+      email_enabled,
+      sms_enabled,
+      name,
+      traceInterval,
+      target_price,
+    });
+    return res.status(200).json({
+      success: true,
+      update: tracker,
+    });
+  } catch (error) {
+    console.error("Error: ", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener todos los rastreadores",
+    });
+  }
+};
