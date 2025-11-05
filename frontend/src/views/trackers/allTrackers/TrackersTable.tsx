@@ -16,7 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AsteriskIcon, LinkIcon, TrashIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Tooltip,
   TooltipContent,
@@ -123,6 +123,8 @@ export function DataTable() {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const navigate = useNavigate()
+
   return (
     <div className="overflow-hidden rounded-md border">
       <Table>
@@ -160,8 +162,13 @@ export function DataTable() {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                Sin Datos.
+              <TableCell colSpan={columns.length} className="h-24 p-5 text-center">
+                <h3 className="mb-0">Aún no hay rastreadores :(</h3>
+                <p className="mb-1 text-wrap">
+                  Disponible para productos en MercadoLibre, Amazon, Coppel y
+                  Liverpool
+                </p>
+                <Button onClick={() => navigate("/home/new-tracker")}>Crea un nuevo rastreador</Button>
               </TableCell>
             </TableRow>
           )}
