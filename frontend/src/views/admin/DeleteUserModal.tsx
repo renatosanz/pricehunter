@@ -16,13 +16,15 @@ export default function DeleteUserModal({
   children,
   id,
   name,
+  callback,
 }: {
   children: React.ReactNode;
   id: number;
   name: string;
+  callback: (id: number) => void;
 }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { canDelete, handleDeleteUser } = useDeleteUser(id);
+  const { canDelete, handleDeleteUser } = useDeleteUser(id,callback);
   return (
     <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
       <AlertDialogTrigger>{children}</AlertDialogTrigger>

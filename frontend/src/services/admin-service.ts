@@ -31,7 +31,7 @@ export interface UserDataTable {
 
 export interface User {
   id: number;
-  role: string;
+  role: "user" | "admin";
   name: string;
   email: string;
   phone: string;
@@ -124,6 +124,49 @@ export const deleteUser = (id: number) => {
     })
     .catch((err) => {
       console.log("Error al eliminiar usuario por admin.", err);
+      return;
+    });
+};
+
+interface EditUserResponse {
+  success: boolean;
+  message?: string;
+  update: {
+    name: string;
+    role: "admin" | "user";
+    phone: string;
+    email: string;
+  };
+}
+
+export const editUser = (
+  userdata: {
+    name: string;
+    role: string;
+    phone: string;
+    email: string;
+  },
+  id: number
+) => {
+  const { name, email, phone, role } = userdata;
+  return axios
+    .patch<EditUserResponse>(
+      `${environment.url_api}/admin/edit-user/${id}`,
+      {
+        name,
+        email,
+        phone,
+        role,
+      },
+      {
+        withCredentials: true,
+      }
+    )
+    .then((res): EditUserResponse => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.log("Error al editar usuario por admin.", err);
       return;
     });
 };

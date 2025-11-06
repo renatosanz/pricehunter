@@ -163,7 +163,8 @@ export const deleteUser = async (req, res) => {
     if (user.isLogged) {
       return res.status(200).json({
         success: false,
-        message: "Usuario con sesion activa, solo es posible eliminar usuarios con sesiones inactivas.",
+        message:
+          "Usuario con sesion activa, solo es posible eliminar usuarios con sesiones inactivas.",
       });
     }
 
@@ -178,6 +179,40 @@ export const deleteUser = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Error al eliminar rastreador",
+    });
+  }
+};
+
+/**
+ * Editar datos de un usuario
+ * @param {import('express').Request & { user?: any }} req
+ * @param {import('express').Response} res
+ */
+export const editUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, phone, role } = req.body;
+
+    const user = await User.findByPk(id, {
+      attributes: ["name", "email", "phone", "role", "id"],
+    });
+
+    await user.update({
+      name,
+      email,
+      phone,
+      role,
+    });
+
+    return res.status(200).json({
+      success: true,
+      update: user,
+    });
+  } catch (error) {
+    console.error("Error: ", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error al editar usuario",
     });
   }
 };

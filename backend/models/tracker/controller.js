@@ -291,7 +291,7 @@ export const editTracker = async (req, res) => {
     console.error("Error: ", error.message);
     return res.status(500).json({
       success: false,
-      message: "Error al obtener todos los rastreadores",
+      message: "Error al editar rastreador",
     });
   }
 };

@@ -4,7 +4,10 @@ import { AsteriskIcon, Smile } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
-export default function useDeleteUser(deleteID: number) {
+export default function useDeleteUser(
+  deleteID: number,
+  callback: (id: number) => void
+) {
   const { user } = useUserStore();
   const [canDelete, setCanDelete] = useState(false);
   const handleDeleteUser = () => {
@@ -16,6 +19,7 @@ export default function useDeleteUser(deleteID: number) {
           icon: <AsteriskIcon />,
         });
       }
+      callback(deleteID);
       return toast("Usuario Eliminado", {
         description: res?.message,
         duration: 2000,

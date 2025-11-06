@@ -184,7 +184,7 @@ export default function DetailsTracker() {
                 </h3>
 
                 {!isEditing ? (
-                  <p>{formatPrice(tracker?.target_price)}</p>
+                  <p className="text-sm bg-sidebar-accent rounded-xl px-2 max-w-fit mt-2">Precio Meta: {formatPrice(tracker?.target_price)}</p>
                 ) : (
                   <div className="relative w-full">
                     <Input

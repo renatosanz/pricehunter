@@ -51,6 +51,8 @@ export default function UsersDataTable() {
     setPageSize,
     pageSize,
     setSearchTerm,
+    updateUserById,
+    removeUser
   } = useUserDataTable();
   const data = usersData.users;
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -59,28 +61,6 @@ export default function UsersDataTable() {
   const [rowSelection, setRowSelection] = useState({});
 
   const columns: ColumnDef<User>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
     {
       accessorKey: "name",
       header: "Usuario",
@@ -166,14 +146,14 @@ export default function UsersDataTable() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <EditUserModal>
+              <EditUserModal callback={updateUserById} userData={row.original}>
                 <Button variant={"outline"}>
                   <Edit className="h-4 w-4 mr-2" />
                   Editar
                 </Button>
               </EditUserModal>
               <DropdownMenuSeparator />
-              <DeleteUserModal id={id} name={name}>
+              <DeleteUserModal callback={removeUser} id={id} name={name}>
                 <Button variant={"destructive"}>
                   <Trash2 className="h-4 w-4 mr-2" />
                   Eliminar
@@ -320,7 +300,6 @@ function UserSearchBar({
           <SelectItem value="20">20 resultados</SelectItem>
         </SelectContent>
       </Select>
-      
     </div>
   );
 }

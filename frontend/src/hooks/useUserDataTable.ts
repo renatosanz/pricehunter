@@ -24,6 +24,39 @@ export default function useUserDataTable() {
     });
   };
 
+  const updateUserById = (
+    id: number,
+    update: {
+      name: string;
+      role: "admin" | "user";
+      phone: string;
+      email: string;
+    }
+  ) => {
+    const { name, role, phone, email } = update;
+    setUsersData({
+      ...usersData,
+      users: usersData.users.map((user) =>
+        user.id == id
+          ? {
+              ...user,
+              name,
+              role,
+              phone,
+              email,
+            }
+          : user
+      ),
+    });
+  };
+
+  const removeUser = (id: number) => {
+    setUsersData({
+      ...usersData,
+      users: usersData.users.filter((user) => user.id != id),
+    });
+  };
+
   useEffect(() => {
     fetchData(pageSize, page, debounceSearchTerm);
   }, [pageSize, page, debounceSearchTerm]);
@@ -47,5 +80,7 @@ export default function useUserDataTable() {
     pageSize,
     page,
     setSearchTerm,
+    updateUserById,
+    removeUser
   };
 }
