@@ -43,7 +43,7 @@ app.use(/(.*)/, (req, res) => {
     await db.authenticate();
     console.log("Conexión con la base de datos establecida correctamente.");
 
-    //await db.sync({ force: true }); // force para crear las tablas
+    // await db.sync({ force: true }); // force para crear las tablas
     console.log("Base de datos sincronizada.");
 
     app.listen(PORT, () => {

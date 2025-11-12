@@ -16,7 +16,9 @@
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "joi": "^18.0.1",
-    "sequelize": "^6.37.7"
+    "node-fetch": "^3.3.2",
+    "sequelize": "^6.37.7",
+    "tough-cookie": "^6.0.0"
   },
   "devDependencies": {
     "@sequelize/core": "^7.0.0-alpha.46",
