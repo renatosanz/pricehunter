@@ -207,6 +207,7 @@ export default function EditUserModal({
             <DialogFooter>
               <Button
                 variant="outline"
+                type="reset"
                 onClick={() => setIsEditDialogOpen(false)}
               >
                 Cancelar
