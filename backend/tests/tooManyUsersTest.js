@@ -4,6 +4,7 @@ import { CookieJar } from "tough-cookie";
 // Configuración
 const BASE_URL = "http://localhost:3000/api/user";
 const TEST_USERS_COUNT = 100;
+const CONCURRENT_REQUESTS = 100; // Número de peticiones concurrentes
 
 // Crear un jar de cookies para manejar las cookies HTTP-Only
 const cookieJar = new CookieJar();
@@ -58,8 +59,9 @@ async function measureOperation(operation) {
 }
 
 // Función para hacer fetch con manejo de cookies y métricas
-async function fetchWithCookies(url, options = {}) {
-  const currentCookies = await cookieJar.getCookieString(url);
+async function fetchWithCookies(url, options = {}, customCookieJar = null) {
+  const jar = customCookieJar || cookieJar;
+  const currentCookies = await jar.getCookieString(url);
 
   const fetchOptions = {
     ...options,
@@ -76,7 +78,7 @@ async function fetchWithCookies(url, options = {}) {
   // Guardar las cookies de la respuesta
   const setCookieHeader = response.headers.get("set-cookie");
   if (setCookieHeader) {
-    await cookieJar.setCookie(setCookieHeader, url);
+    await jar.setCookie(setCookieHeader, url);
   }
 
   return {
@@ -88,18 +90,22 @@ async function fetchWithCookies(url, options = {}) {
 }
 
 // Función para hacer login con métricas
-async function loginUser(email, password) {
+async function loginUser(email, password, userCookieJar) {
   try {
-    const { response, latency } = await fetchWithCookies(`${BASE_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const { response, latency } = await fetchWithCookies(
+      `${BASE_URL}/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
       },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    });
+      userCookieJar,
+    ); // ✅ Pasar el CookieJar específico
 
     const data = await response.json();
 
@@ -108,7 +114,7 @@ async function loginUser(email, password) {
       status: response.status,
       data: data,
       latency: latency,
-      cookies: await cookieJar.getCookieString(BASE_URL),
+      cookies: await userCookieJar.getCookieString(BASE_URL),
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -122,14 +128,18 @@ async function loginUser(email, password) {
 }
 
 // Función para hacer logout con métricas
-async function logoutUser() {
+async function logoutUser(userCookieJar) {
   try {
-    const { response, latency } = await fetchWithCookies(`${BASE_URL}/logout`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+    const { response, latency } = await fetchWithCookies(
+      `${BASE_URL}/logout`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    });
+      userCookieJar,
+    ); // ✅ Pasar el CookieJar específico
 
     const data = await response.json();
 
@@ -149,7 +159,6 @@ async function logoutUser() {
     };
   }
 }
-
 // Función para limpiar cookies entre tests
 async function clearCookies() {
   await cookieJar.removeAllCookies();
@@ -177,9 +186,175 @@ function displayMetricsTable(metrics, title) {
   console.log(`📊 P99: ${percentiles.p99}ms`);
 }
 
-// Función principal que testea todos los usuarios con métricas completas
+// Función para procesar un lote de usuarios en paralelo
+// Función para procesar un lote de usuarios en paralelo
+async function processUserBatch(userBatch) {
+  const batchPromises = userBatch.map(async (userData) => {
+    const { i, email, password } = userData;
+
+    // ✅ Crear CookieJar independiente para cada usuario
+    const userCookieJar = new CookieJar();
+
+    console.log(`🔐 Procesando usuario ${i}/${TEST_USERS_COUNT}: ${email}`);
+
+    const userMetric = {
+      userNumber: i,
+      email: email,
+      login: {},
+      logout: {},
+    };
+
+    let loginSuccess = false;
+
+    // Test de LOGIN con medición de tiempo usando CookieJar específico
+    const loginMeasurement = await measureOperation(() =>
+      loginUser(email, password, userCookieJar),
+    );
+    const loginResult = loginMeasurement.result;
+    userMetric.login = {
+      duration: loginMeasurement.duration,
+      latency: loginResult.latency || 0,
+      success: loginResult.success,
+      status: loginResult.status,
+      timestamp: loginResult.timestamp,
+    };
+
+    globalMetrics.loginResponseTimes.push(loginResult.latency || 0);
+    globalMetrics.totalLoginTime += loginMeasurement.duration;
+
+    if (!loginResult.success) {
+      globalMetrics.failedRequests++;
+      const errorResult = {
+        user: email,
+        step: "LOGIN",
+        error: loginResult.error || `Status: ${loginResult.status}`,
+        data: loginResult.data,
+        duration: loginMeasurement.duration,
+        latency: loginResult.latency,
+      };
+      console.log(
+        `   ❌ LOGIN FALLIDO (${loginMeasurement.duration}ms): ${loginResult.error || loginResult.data?.message || `Status: ${loginResult.status}`}`,
+      );
+
+      // Limpiar cookies del usuario
+      await userCookieJar.removeAllCookies();
+      return { success: false, userMetric, error: errorResult };
+    }
+
+    loginSuccess = true;
+    globalMetrics.successfulRequests++;
+    console.log(
+      `   ✅ LOGIN EXITOSO (${loginMeasurement.duration}ms, Latencia: ${loginResult.latency}ms)`,
+    );
+
+    // Pequeña pausa entre operaciones
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    // Test de LOGOUT con medición de tiempo usando CookieJar específico
+    const logoutMeasurement = await measureOperation(() =>
+      logoutUser(userCookieJar),
+    );
+    const logoutResult = logoutMeasurement.result;
+    userMetric.logout = {
+      duration: logoutMeasurement.duration,
+      latency: logoutResult.latency || 0,
+      success: logoutResult.success,
+      status: logoutResult.status,
+      timestamp: logoutResult.timestamp,
+    };
+
+    globalMetrics.logoutResponseTimes.push(logoutResult.latency || 0);
+    globalMetrics.totalLogoutTime += logoutMeasurement.duration;
+
+    if (!logoutResult.success) {
+      globalMetrics.failedRequests++;
+      const errorResult = {
+        user: email,
+        step: "LOGOUT",
+        error: logoutResult.error || `Status: ${logoutResult.status}`,
+        data: logoutResult.data,
+        duration: logoutMeasurement.duration,
+        latency: logoutResult.latency,
+      };
+      console.log(
+        `   ❌ LOGOUT FALLIDO (${logoutMeasurement.duration}ms): ${logoutResult.error || logoutResult.data?.message || `Status: ${logoutResult.status}`}`,
+      );
+
+      // Limpiar cookies del usuario
+      await userCookieJar.removeAllCookies();
+      return {
+        success: false,
+        userMetric,
+        error: errorResult,
+        partialSuccess: loginSuccess, // Indicar que al menos el login fue exitoso
+      };
+    }
+
+    globalMetrics.successfulRequests++;
+    console.log(
+      `   ✅ LOGOUT EXITOSO (${logoutMeasurement.duration}ms, Latencia: ${logoutResult.latency}ms)`,
+    );
+
+    // Limpiar cookies del usuario específico
+    await userCookieJar.removeAllCookies();
+
+    return {
+      success: true,
+      userMetric,
+      loginDuration: loginMeasurement.duration,
+      logoutDuration: logoutMeasurement.duration,
+    };
+  });
+
+  // Ejecutar todas las promesas del lote en paralelo
+  const batchResults = await Promise.allSettled(batchPromises);
+
+  // Procesar resultados y convertir a formato uniforme
+  const processedResults = batchResults.map((result, index) => {
+    if (result.status === "fulfilled") {
+      return result.value;
+    } else {
+      // Manejar errores inesperados en la promesa
+      const userData = userBatch[index];
+      console.error(
+        `❌ Error inesperado procesando usuario ${userData.email}:`,
+        result.reason,
+      );
+
+      globalMetrics.failedRequests += 2; // Cuenta login y logout como fallidos
+
+      const errorResult = {
+        user: userData.email,
+        step: "UNKNOWN",
+        error: result.reason.message,
+        duration: 0,
+        latency: 0,
+      };
+
+      return {
+        success: false,
+        userMetric: {
+          userNumber: userData.i,
+          email: userData.email,
+          login: { success: false, error: result.reason.message },
+          logout: { success: false, error: result.reason.message },
+        },
+        error: errorResult,
+      };
+    }
+  });
+
+  return processedResults;
+}
+
+// Función principal que testea todos los usuarios con métricas completas en paralelo
 async function testAllUsersLoginLogout() {
-  console.log("🚀 Iniciando tests de login/logout para 100 usuarios...\n");
+  console.log(
+    "🚀 Iniciando tests de login/logout para 100 usuarios en PARALELO...\n",
+  );
+  console.log(
+    `📊 Configuración: ${CONCURRENT_REQUESTS} peticiones concurrentes\n`,
+  );
 
   // Inicializar métricas globales
   globalMetrics.startTime = Date.now();
@@ -193,102 +368,40 @@ async function testAllUsersLoginLogout() {
     userMetrics: [],
   };
 
+  // Crear array de usuarios a procesar
+  const users = [];
   for (let i = 1; i <= TEST_USERS_COUNT; i++) {
-    const email = `test.user${i}@example.com`;
-    const password = "password123";
+    users.push({
+      i,
+      email: `test.user${i}@example.com`,
+      password: "password123",
+    });
+  }
 
-    console.log(`🔐 Testeando usuario ${i}/${TEST_USERS_COUNT}: ${email}`);
-
-    const userMetric = {
-      userNumber: i,
-      email: email,
-      login: {},
-      logout: {},
-    };
-
-    // Test de LOGIN con medición de tiempo
-    const loginMeasurement = await measureOperation(() =>
-      loginUser(email, password),
-    );
-    const loginResult = loginMeasurement.result;
-    userMetric.login = {
-      duration: loginMeasurement.duration,
-      latency: loginResult.latency || 0,
-      success: loginResult.success,
-      timestamp: loginResult.timestamp,
-    };
-
-    globalMetrics.loginResponseTimes.push(loginResult.latency || 0);
-    globalMetrics.totalLoginTime += loginMeasurement.duration;
-
-    if (!loginResult.success) {
-      results.failed++;
-      globalMetrics.failedRequests++;
-      results.errors.push({
-        user: email,
-        step: "LOGIN",
-        error: loginResult.error || `Status: ${loginResult.status}`,
-        data: loginResult.data,
-        duration: loginMeasurement.duration,
-        latency: loginResult.latency,
-      });
-      console.log(
-        `   ❌ LOGIN FALLIDO (${loginMeasurement.duration}ms): ${loginResult.error || loginResult.data?.message}`,
-      );
-      continue;
-    }
-
-    globalMetrics.successfulRequests++;
+  // Procesar usuarios en lotes para controlar la concurrencia
+  for (let i = 0; i < users.length; i += CONCURRENT_REQUESTS) {
+    const batch = users.slice(i, i + CONCURRENT_REQUESTS);
     console.log(
-      `   ✅ LOGIN EXITOSO (${loginMeasurement.duration}ms, Latencia: ${loginResult.latency}ms)`,
+      `\n🔄 Procesando lote ${Math.floor(i / CONCURRENT_REQUESTS) + 1}/${Math.ceil(users.length / CONCURRENT_REQUESTS)}`,
     );
 
-    // Pequeña pausa entre operaciones
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    const batchResults = await processUserBatch(batch);
 
-    // Test de LOGOUT con medición de tiempo
-    const logoutMeasurement = await measureOperation(() => logoutUser());
-    const logoutResult = logoutMeasurement.result;
-    userMetric.logout = {
-      duration: logoutMeasurement.duration,
-      latency: logoutResult.latency || 0,
-      success: logoutResult.success,
-      timestamp: logoutResult.timestamp,
-    };
+    // Procesar resultados del lote
+    batchResults.forEach((batchResult) => {
+      if (batchResult.success) {
+        results.successful++;
+        results.userMetrics.push(batchResult.userMetric);
+      } else {
+        results.failed++;
+        results.errors.push(batchResult.error);
+      }
+    });
 
-    globalMetrics.logoutResponseTimes.push(logoutResult.latency || 0);
-    globalMetrics.totalLogoutTime += logoutMeasurement.duration;
-
-    if (!logoutResult.success) {
-      results.failed++;
-      globalMetrics.failedRequests++;
-      results.errors.push({
-        user: email,
-        step: "LOGOUT",
-        error: logoutResult.error || `Status: ${logoutResult.status}`,
-        data: logoutResult.data,
-        duration: logoutMeasurement.duration,
-        latency: logoutResult.latency,
-      });
-      console.log(
-        `   ❌ LOGOUT FALLIDO (${logoutMeasurement.duration}ms): ${logoutResult.error || logoutResult.data?.message}`,
-      );
-      continue;
+    // Pequeña pausa entre lotes para no saturar el servidor
+    if (i + CONCURRENT_REQUESTS < users.length) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
-
-    globalMetrics.successfulRequests++;
-    console.log(
-      `   ✅ LOGOUT EXITOSO (${logoutMeasurement.duration}ms, Latencia: ${logoutResult.latency}ms)`,
-    );
-
-    results.successful++;
-    results.userMetrics.push(userMetric);
-
-    // Limpiar cookies para el siguiente usuario
-    await clearCookies();
-
-    // Pequeña pausa para no saturar el servidor
-    await new Promise((resolve) => setTimeout(resolve, 30));
   }
 
   // Calcular métricas finales
@@ -429,7 +542,7 @@ async function testSpecificUser(userNumber) {
 // Ejecutar los tests
 async function main() {
   try {
-    console.log("🧪 INICIANDO PRUEBAS DE CARGA Y RENDIMIENTO");
+    console.log("🧪 INICIANDO PRUEBAS DE CARGA Y RENDIMIENTO EN PARALELO");
     console.log("=".repeat(50));
 
     // Testear todos los usuarios

@@ -76,7 +76,7 @@ export const userLogin = async (req, res) => {
     const token = jwt.sign(
       { user: user_db.id, role: user_db.role },
       process.env.SEED_AUTENTICACION || "",
-      { expiresIn: process.env.CADUCIDAD_TOKEN }
+      { expiresIn: process.env.CADUCIDAD_TOKEN },
     );
     user_db.lastLogin = new Date();
     user_db.isLogged = true;
@@ -105,40 +105,59 @@ export const userLogin = async (req, res) => {
  */
 export const userLogOut = async (req, res) => {
   const { access_token } = req.cookies;
+
+  if (!access_token) {
+    return res
+      .clearCookie("access_token", {
+        sameSite: "none",
+        httpOnly: true,
+        secure: true,
+      })
+      .status(200)
+      .json({ success: true, message: "No active session" });
+  }
+
   try {
-    jwt.verify(
+    const decoded = jwt.verify(
       access_token,
       process.env.SEED_AUTENTICACION || "",
-      async (err, decoded) => {
-        if (err && err.name == "TokenExpiredError") {
-          return res
-            .clearCookie("access_token", {
-              sameSite: "none",
-              httpOnly: true,
-              secure: true,
-            })
-            .json({ success: true, message: "Sesion Expirada" })
-            .status(200);
-        }
-
-        const { user } = decoded;
-        const user_db = await User.findOne({
-          where: { id: user },
-        });
-        user_db.isLogged = false;
-        user_db.save();
-        return res
-          .clearCookie("access_token", {
-            sameSite: "none",
-            httpOnly: true,
-            secure: true,
-          })
-          .status(200)
-          .json({ success: true });
-      }
     );
+    const { user } = decoded;
+    const user_db = await User.findOne({ where: { id: user } });
+
+    if (user_db) {
+      user_db.isLogged = false;
+      await user_db.save();
+    }
+
+    return res
+      .clearCookie("access_token", {
+        sameSite: "none",
+        httpOnly: true,
+        secure: true,
+      })
+      .status(200)
+      .json({ success: true, message: "Logout successful" });
   } catch (error) {
-    console.log("Error al cerrar sesion", error);
-    return res.status(403).send("Error al cerrar sesion");
+    console.log("Error during logout:", error);
+    if (
+      error.name === "TokenExpiredError" ||
+      error.name === "JsonWebTokenError"
+    ) {
+      return res
+        .clearCookie("access_token", {
+          sameSite: "none",
+          httpOnly: true,
+          secure: true,
+        })
+        .status(200)
+        .json({ success: true, message: "Session expired" });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Error during logout",
+      error: error.message,
+    });
   }
 };
